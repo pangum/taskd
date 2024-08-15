@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"github.com/pangum/taskd/internal/model"
+	"github.com/pangum/taskd/internal/internal/model"
 )
 
 type Task interface {
