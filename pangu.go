@@ -1,4 +1,4 @@
-package starter
+package taskd
 
 import (
 	"github.com/pangum/pangu"
