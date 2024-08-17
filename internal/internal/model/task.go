@@ -15,7 +15,7 @@ type Task struct {
 	model.Optimistic `xorm:"extends"` // 使用乐观锁，优化重试时的性能
 
 	// 目标
-	Target int64 `xorm:"bigint notnull index(target) default(0) comment(目标标识)" json:"target,omitempty"`
+	Target uint64 `xorm:"bigint notnull index(target) default(0) comment(目标标识)" json:"target,omitempty"`
 	// 下一次重试时间
 	// nolint:lll
 	Next time.Time `xorm:"datetime notnull index(next) default(CURRENT_TIMESTAMP) comment(一下次更新时间)" json:"next,omitempty"`

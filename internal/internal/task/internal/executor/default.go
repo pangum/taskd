@@ -3,15 +3,17 @@ package executor
 import (
 	"time"
 
-	"github.com/dnsabre/core/kernel"
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
 	"github.com/goexl/structer"
+	"github.com/goexl/task"
 	"github.com/pangum/taskd/internal/internal/config"
+	"github.com/pangum/taskd/internal/internal/internal/column"
 	"github.com/pangum/taskd/internal/internal/model"
 	"github.com/pangum/taskd/internal/internal/repository"
 	"github.com/pangum/taskd/internal/internal/task/internal/core"
+	"github.com/pangum/taskd/internal/internal/task/internal/executor/internal"
 	"github.com/pangum/taskd/internal/internal/task/internal/executor/internal/get"
 )
 
@@ -21,23 +23,25 @@ type Default struct {
 	running    *core.Running
 	logger     log.Logger
 
-	task   *model.Task // 用于保存每次任务的执行原始数据
-	tasker Tasker      // 用于清理数据时计算下一次执行时间
+	processor task.Processor // 执行器
+	task      *model.Task    // 用于保存每次任务的执行原始数据
+	executor  task.Executor  // 用于清理数据时计算下一次执行时间
 }
 
-func newDefault(put get.Default) *Default {
+func newDefault(get get.Default) *Default {
 	return &Default{
-		repository: put.Repository,
-		config:     put.Config,
-		running:    put.Running,
-		logger:     put.Logger,
+		repository: get.Repository,
+		config:     get.Config,
+		running:    get.Running,
+		logger:     get.Logger,
 	}
 }
 
-func (d *Default) Clone(task *model.Task) (cloned *Default) {
+func (d *Default) Clone(task *model.Task, processor task.Processor) (cloned *Default) {
 	cloned = new(Default)
 	if ce := structer.Copy().From(d).To(cloned).Build().Apply(); nil == ce {
 		cloned.task = task
+		cloned.processor = processor
 	} else {
 		d.logger.Warn("创建执行器出错", field.New("task", task))
 	}
@@ -64,11 +68,13 @@ func (d *Default) Run() (err error) {
 }
 
 func (d *Default) run() (err error) {
-	switch d.task.Type {
-	case kernel.TaskType_TASK_TYPE_RULE:
-		d.tasker = d.rule.Clone(d.task.Target)
+	tasking := internal.NewTasking(d.task.Id, d.task.Target, d.task.Data, d.task.Times)
+	if executor, pe := d.processor.Process(tasking); nil != pe {
+		err = pe
+	} else {
+		d.executor = executor
+		err = d.executor.Execute()
 	}
-	err = d.tasker.Exec()
 
 	return
 }
@@ -76,7 +82,7 @@ func (d *Default) run() (err error) {
 func (d *Default) updateRunning() (err error) {
 	updated := new(model.Task)
 	updated.Id = d.task.Id
-	updated.Status = gox.Ift(0 == d.task.Times, kernel.TaskStatus_TASK_STATUS_RUNNING, kernel.TaskStatus_TASK_STATUS_RETRYING) // nolint:lll
+	updated.Status = gox.Ift[task.Status](0 == d.task.Times, task.StatusRunning, task.StatusRetrying)
 	updated.Times = d.task.Times + 1
 	err = d.update(updated)
 
@@ -94,7 +100,7 @@ func (d *Default) cleanup(result *error) (err error) {
 	} else { // 以二的幂为基数重试
 		updated := new(model.Task)
 		updated.Id = d.task.Id
-		updated.Status = kernel.TaskStatus_TASK_STATUS_FAILED
+		updated.Status = task.StatusFailed
 		// 确定下一次重试的时间，计算规则是，以二的幂为基数重试
 		updated.Next = time.Now().Add(15 * time.Second * 2 << d.task.Times)
 		err = d.update(updated)
@@ -117,7 +123,7 @@ func (d *Default) update(task *model.Task, columns ...string) (err error) {
 }
 
 func (d *Default) next() (err error) {
-	if d.tasker.Recyclable() { // 需要循环执行，更新下一次执行时间，等待被调度
+	if d.executor.Recyclable() { // 需要循环执行，更新下一次执行时间，等待被调度
 		err = d.updateNext()
 	} else { // 不需要被循环执行，清理数据
 		deleted := new(model.Task)
@@ -132,9 +138,9 @@ func (d *Default) updateNext() (err error) {
 	updated := new(model.Task)
 	updated.Id = d.task.Id
 	updated.Times = 0
-	updated.Status = kernel.TaskStatus_TASK_STATUS_SUCCESS
-	updated.Next = d.tasker.Next()
-	err = d.update(updated, constant.ColumnTimes.String())
+	updated.Status = task.StatusSuccess
+	updated.Next = d.executor.Next()
+	err = d.update(updated, column.Times.String())
 
 	return
 }

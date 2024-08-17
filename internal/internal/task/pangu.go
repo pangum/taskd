@@ -7,6 +7,5 @@ import (
 func init() {
 	pangu.New().Get().Dependency().Puts(
 		newRunnable,
-		newUpstream,
 	).Build().Apply()
 }
