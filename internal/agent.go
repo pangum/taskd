@@ -1,29 +1,34 @@
 package internal
 
 import (
+	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
-	"github.com/goexl/schedule"
 	"github.com/goexl/task"
-	"github.com/pangum/taskd/internal/internal/config"
-	"github.com/pangum/taskd/internal/internal/repository"
+	"github.com/pangum/taskd/internal/internal/schedule"
 )
 
 var _ task.Agent = (*Agent)(nil)
 
 type Agent struct {
-	task      repository.Task
-	scheduler *schedule.Scheduler
-	config    *config.Retry
-	logger    log.Logger
+	runnable schedule.Runnable
+	logger   log.Logger
 }
 
-func NewAgent(task repository.Task) *Agent {
+func NewAgent(runnable schedule.Runnable, logger log.Logger) *Agent {
 	return &Agent{
-		task: task,
+		runnable: runnable,
+		logger:   logger,
 	}
 }
 
 func (a Agent) Start(processor task.Processor) (err error) {
+	if sre := a.runnable.Start(processor); nil != sre {
+		err = sre
+		a.logger.Error("启动任务处理出错", field.Error(err))
+	} else {
+		a.logger.Info("启动任务处理成功", field.New("processor", processor))
+	}
+
 	return
 }
 

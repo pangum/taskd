@@ -12,9 +12,9 @@ import (
 	"github.com/pangum/taskd/internal/internal/internal/column"
 	"github.com/pangum/taskd/internal/internal/model"
 	"github.com/pangum/taskd/internal/internal/repository"
-	"github.com/pangum/taskd/internal/internal/task/internal/core"
-	"github.com/pangum/taskd/internal/internal/task/internal/executor/internal"
-	"github.com/pangum/taskd/internal/internal/task/internal/executor/internal/get"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/core"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/executor/internal"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/executor/internal/get"
 )
 
 type Default struct {

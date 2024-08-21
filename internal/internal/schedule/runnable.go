@@ -1,4 +1,4 @@
-package task
+package schedule
 
 import (
 	"github.com/goexl/gox"
@@ -9,9 +9,9 @@ import (
 	"github.com/pangum/taskd/internal/internal/config"
 	"github.com/pangum/taskd/internal/internal/model"
 	"github.com/pangum/taskd/internal/internal/repository"
-	"github.com/pangum/taskd/internal/internal/task/internal/core"
-	"github.com/pangum/taskd/internal/internal/task/internal/executor"
-	"github.com/pangum/taskd/internal/internal/task/internal/get"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/core"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/executor"
+	"github.com/pangum/taskd/internal/internal/schedule/internal/get"
 )
 
 type Runnable struct {
