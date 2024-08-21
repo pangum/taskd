@@ -3,8 +3,8 @@ package mysql
 import (
 	"time"
 
-	"github.com/dnsabre/core/kernel"
 	"github.com/goexl/id"
+	"github.com/goexl/task"
 	"github.com/pangum/db"
 	"github.com/pangum/taskd/internal/internal/internal/column"
 	"github.com/pangum/taskd/internal/internal/model"
@@ -37,7 +37,7 @@ func (t *Task) Get(task *model.Task, columns ...string) (bool, error) {
 }
 
 func (t *Task) GetsRunnable(
-	count int, times uint8, maximum time.Duration, excludes ...*model.Task,
+	count int, times uint32, maximum time.Duration, excludes ...*model.Task,
 ) (tasks *[]*model.Task, err error) {
 	required := builder.Lte{
 		column.Times.String(): times, // 还没有到最大重试次数
@@ -47,13 +47,13 @@ func (t *Task) GetsRunnable(
 	created := builder.Lte{
 		column.Next.String(): time.Now(), // 运行时间已到
 	}.And(builder.Eq{
-		column.Status.String(): kernel.TaskStatus_TASK_STATUS_CREATED, // 刚创建的任务
+		column.Status.String(): task.StatusCreated, // 刚创建的任务
 	}.Or(builder.Eq{
-		column.Status.String(): kernel.TaskStatus_TASK_STATUS_FAILED, // 已经处于错误状态的任务
+		column.Status.String(): task.StatusFailed, // 已经处于错误状态的任务
 	}))
 	// 可被运行的条件二：任务已完成执行，但需要重启执行（可被循环执行的任务，达到下一次执行的条件）
 	recyclable := builder.Eq{ // 已经完成的任务，需要重新执行
-		column.Status.String(): kernel.TaskStatus_TASK_STATUS_SUCCESS, // 已完成
+		column.Status.String(): task.StatusSuccess, // 已完成
 	}.And(builder.Eq{
 		column.Times.String(): 0, // 次数被重置
 	})
@@ -61,9 +61,9 @@ func (t *Task) GetsRunnable(
 	interrupted := builder.Lte{
 		column.Next.String(): time.Now().Add(-maximum), // 超过配置时间的最大运行时间段
 	}.And(builder.Eq{
-		column.Status.String(): kernel.TaskStatus_TASK_STATUS_RUNNING, // 运行中
+		column.Status.String(): task.StatusRunning, // 运行中
 	}.Or(builder.Eq{
-		column.Status.String(): kernel.TaskStatus_TASK_STATUS_RETRYING, // 重试中
+		column.Status.String(): task.StatusRetrying, // 重试中
 	}))
 
 	// 排除
