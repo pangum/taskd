@@ -14,7 +14,7 @@ type Agent struct {
 	logger   log.Logger
 }
 
-func NewAgent(runnable schedule.Runnable, logger log.Logger) *Agent {
+func NewAgent(runnable schedule.Runnable, logger log.Logger) task.Agent {
 	return &Agent{
 		runnable: runnable,
 		logger:   logger,
