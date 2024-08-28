@@ -6,7 +6,7 @@ require (
 	github.com/goexl/gox v0.6.3
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.7
-	github.com/goexl/model v0.1.1
+	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/structer v0.1.7
 	github.com/goexl/task v0.0.8
