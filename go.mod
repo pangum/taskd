@@ -3,7 +3,7 @@ module github.com/pangum/taskd
 go 1.23
 
 require (
-	github.com/goexl/gox v1.8.7
+	github.com/goexl/gox v1.8.8
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.7
 	github.com/goexl/model v0.1.2
@@ -11,7 +11,7 @@ require (
 	github.com/goexl/structer v0.1.8
 	github.com/goexl/task v0.0.8
 	github.com/pangum/db v0.2.2
-	github.com/pangum/pangu v1.4.4
+	github.com/pangum/pangu v1.4.5
 	xorm.io/builder v0.3.13
 )
 
@@ -42,7 +42,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
-	github.com/pangum/config v0.0.9 // indirect
+	github.com/pangum/config v0.1.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
