@@ -9,7 +9,7 @@ require (
 	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/structer v0.1.8
-	github.com/goexl/task v0.0.8
+	github.com/goexl/task v0.0.9
 	github.com/pangum/db v0.2.2
 	github.com/pangum/pangu v1.4.5
 	xorm.io/builder v0.3.13
@@ -31,12 +31,12 @@ require (
 	github.com/goexl/exception v0.0.1 // indirect
 	github.com/goexl/gfx v0.2.3 // indirect
 	github.com/goexl/mengpo v0.2.6 // indirect
-	github.com/goexl/xiren v0.0.7 // indirect
+	github.com/goexl/xiren v0.0.8 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20240819163618-b1d8f4d146e7 // indirect
+	github.com/lufia/plan9stats v0.0.0-20240909124753-873cd0166683 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

@@ -53,8 +53,11 @@ func (r *Runnable) Start(processor task.Processor) (err error) {
 	return
 }
 
-func (r *Runnable) Stop() {
+func (r *Runnable) Stop() (err error) {
 	r.scheduler.Remove().Id(r.id).Build().Apply()
+	err = r.scheduler.Stop()
+
+	return
 }
 
 func (r *Runnable) Run() (err error) {

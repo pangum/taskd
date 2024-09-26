@@ -32,10 +32,21 @@ func (a Agent) Start(processor task.Processor) (err error) {
 	return
 }
 
-func (a Agent) Add(scheduling task.Scheduling) (err error) {
+func (a Agent) Add(_ task.Scheduling) (err error) {
 	return
 }
 
-func (a Agent) Remove(scheduling task.Scheduling) (err error) {
+func (a Agent) Remove(_ task.Scheduling) (err error) {
+	return
+}
+
+func (a Agent) Stop() (err error) {
+	if sre := a.runnable.Stop(); nil != sre {
+		err = sre
+		a.logger.Error("停止任务处理出错", field.Error(err))
+	} else {
+		a.logger.Info("停止任务处理成功", field.New("scheduler", "runnable"))
+	}
+
 	return
 }
