@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
 	"github.com/goexl/task"
@@ -21,7 +23,7 @@ func NewAgent(runnable schedule.Runnable, logger log.Logger) task.Agent {
 	}
 }
 
-func (a Agent) Start(processor task.Processor) (err error) {
+func (a Agent) Start(_ context.Context, processor task.Processor) (err error) {
 	if sre := a.runnable.Start(processor); nil != sre {
 		err = sre
 		a.logger.Error("启动任务处理出错", field.Error(err))
@@ -40,7 +42,7 @@ func (a Agent) Remove(_ task.Scheduling) (err error) {
 	return
 }
 
-func (a Agent) Stop() (err error) {
+func (a Agent) Stop(_ context.Context) (err error) {
 	if sre := a.runnable.Stop(); nil != sre {
 		err = sre
 		a.logger.Error("停止任务处理出错", field.Error(err))
