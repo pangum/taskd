@@ -11,7 +11,7 @@ require (
 	github.com/goexl/structer v0.1.8
 	github.com/goexl/task v0.1.0
 	github.com/pangum/db v0.2.2
-	github.com/pangum/pangu v1.4.5
+	github.com/pangum/pangu v1.4.6
 	xorm.io/builder v0.3.13
 )
 
