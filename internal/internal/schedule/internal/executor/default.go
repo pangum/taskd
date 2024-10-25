@@ -8,6 +8,8 @@ import (
 	"github.com/goexl/log"
 	"github.com/goexl/structer"
 	"github.com/goexl/task"
+	core2 "github.com/goexl/task/internal/core"
+	core3 "github.com/goexl/task/internal/internal/core"
 	"github.com/pangum/taskd/internal/internal/config"
 	"github.com/pangum/taskd/internal/internal/internal/column"
 	"github.com/pangum/taskd/internal/internal/model"
@@ -23,9 +25,9 @@ type Default struct {
 	running    *core.Running
 	logger     log.Logger
 
-	processor task.Processor // 执行器
-	task      *model.Task    // 用于保存每次任务的执行原始数据
-	executor  task.Executor  // 用于清理数据时计算下一次执行时间
+	processor core2.Processor // 执行器
+	task      *model.Task     // 用于保存每次任务的执行原始数据
+	executor  core3.Executor  // 用于清理数据时计算下一次执行时间
 }
 
 func newDefault(get get.Default) *Default {
@@ -37,7 +39,7 @@ func newDefault(get get.Default) *Default {
 	}
 }
 
-func (d *Default) Clone(task *model.Task, processor task.Processor) (cloned *Default) {
+func (d *Default) Clone(task *model.Task, processor core2.Processor) (cloned *Default) {
 	cloned = new(Default)
 	if ce := structer.Copy().From(d).To(cloned).Build().Apply(); nil == ce {
 		cloned.task = task
@@ -68,7 +70,7 @@ func (d *Default) Run() (err error) {
 }
 
 func (d *Default) run() (err error) {
-	tasking := internal.NewTasking(d.task.Id, d.task.Target, d.task.Data, d.task.Times)
+	tasking := internal.NewTasking(d.task.Id, d.task.Target, d.task.Data, d.task.Retries)
 	if executor, pe := d.processor.Process(tasking); nil != pe {
 		err = pe
 	} else {
@@ -82,8 +84,8 @@ func (d *Default) run() (err error) {
 func (d *Default) updateRunning() (err error) {
 	updated := new(model.Task)
 	updated.Id = d.task.Id
-	updated.Status = gox.Ift[task.Status](0 == d.task.Times, task.StatusRunning, task.StatusRetrying)
-	updated.Times = d.task.Times + 1
+	updated.Status = gox.Ift[task.Status](0 == d.task.Retries, task.StatusRunning, task.StatusRetrying)
+	updated.Retries = d.task.Retries + 1
 	err = d.update(updated)
 
 	return
@@ -93,16 +95,16 @@ func (d *Default) cleanup(result *error) (err error) {
 	if nil == *result { // 执行成功，更新下一次执行时间
 		d.running.Remove(d.task)
 		err = d.next()
-	} else if d.task.Times >= d.config.Times {
+	} else if d.task.Retries >= d.config.Times {
 		d.running.Remove(d.task)
-		d.logger.Warn("已达到最大重试次数，任务不再被执行", field.New("task", d.task), field.New("time", d.task.Times))
+		d.logger.Warn("已达到最大重试次数，任务不再被执行", field.New("task", d.task), field.New("time", d.task.Retries))
 		err = d.next()
 	} else { // 以二的幂为基数重试
 		updated := new(model.Task)
 		updated.Id = d.task.Id
 		updated.Status = task.StatusFailed
 		// 确定下一次重试的时间，计算规则是，以二的幂为基数重试
-		updated.Next = time.Now().Add(15 * time.Second * 2 << d.task.Times)
+		updated.Next = time.Now().Add(15 * time.Second * 2 << d.task.Retries)
 		err = d.update(updated)
 	}
 
@@ -137,7 +139,7 @@ func (d *Default) next() (err error) {
 func (d *Default) updateNext() (err error) {
 	updated := new(model.Task)
 	updated.Id = d.task.Id
-	updated.Times = 0
+	updated.Retries = 0
 	updated.Status = task.StatusSuccess
 	updated.Next = d.executor.Next()
 	err = d.update(updated, column.Times.String())

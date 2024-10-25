@@ -5,7 +5,7 @@ import (
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
 	"github.com/goexl/schedule"
-	"github.com/goexl/task"
+	core2 "github.com/goexl/task/internal/core"
 	"github.com/pangum/taskd/internal/internal/config"
 	"github.com/pangum/taskd/internal/internal/model"
 	"github.com/pangum/taskd/internal/internal/repository"
@@ -18,7 +18,7 @@ type Runnable struct {
 	repository repository.Task
 	scheduler  *schedule.Scheduler
 	executor   *executor.Default
-	processor  task.Processor
+	processor  core2.Processor
 	config     *config.Retry
 	running    *core.Running
 	logger     log.Logger
@@ -36,7 +36,7 @@ func newRunnable(get get.Runnable) *Runnable {
 	}
 }
 
-func (r *Runnable) Start(processor task.Processor) (err error) {
+func (r *Runnable) Start(processor core2.Processor) (err error) {
 	name := "任务执行器"
 	fields := gox.Fields[any]{
 		field.New("name", name),

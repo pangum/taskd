@@ -20,7 +20,7 @@ type Task struct {
 	// nolint:lll
 	Next time.Time `xorm:"datetime notnull index(next) default(CURRENT_TIMESTAMP) comment(一下次更新时间)" json:"next,omitempty"`
 	// 重试次数
-	Times uint32 `xorm:"int notnull default(0) comment(重试次数)" json:"times,omitempty"`
+	Retries uint32 `xorm:"int notnull default(0) comment(重试次数)" json:"retries,omitempty"`
 	// 状态
 	// nolint:lll
 	Status task.Status `xorm:"tinyint notnull index(next) default(0) comment(状态，分别是：1、已创建；2、执行中；3、重试中；10、失败；20、成功)" json:"status,omitempty"`
