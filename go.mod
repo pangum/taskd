@@ -9,7 +9,7 @@ require (
 	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/structer v0.1.9
-	github.com/goexl/task v0.1.2
+	github.com/goexl/task v0.1.3
 	github.com/pangum/db v0.2.2
 	github.com/pangum/pangu v1.4.8
 	xorm.io/builder v0.3.13
