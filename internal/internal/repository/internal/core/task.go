@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/pangum/taskd/internal/internal/model"
 )
 
@@ -11,7 +9,7 @@ type Task interface {
 
 	Get(task *model.Task, columns ...string) (bool, error)
 
-	GetsRunnable(count int, times uint32, maximum time.Duration, excludes ...*model.Task) (*[]*model.Task, error)
+	GetsRunnable(times uint32, excludes ...*model.Task) (*[]*model.Task, error)
 
 	Update(task *model.Task, columns ...string) (int64, error)
 

@@ -6,6 +6,7 @@ import (
 
 func init() {
 	pangu.New().Get().Dependency().Puts(
+		newSchedule,
 		newTask,
 	).Build().Apply()
 }

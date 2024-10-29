@@ -36,9 +36,7 @@ func (t *Task) Get(task *model.Task, columns ...string) (bool, error) {
 	return t.db.Cols(columns...).Get(task)
 }
 
-func (t *Task) GetsRunnable(
-	count int, times uint32, maximum time.Duration, excludes ...*model.Task,
-) (tasks *[]*model.Task, err error) {
+func (t *Task) GetsRunnable(times uint32, excludes ...*model.Task) (tasks *[]*model.Task, err error) {
 	required := builder.Lte{
 		column.Times.String(): times, // 还没有到最大重试次数
 	}
@@ -51,15 +49,17 @@ func (t *Task) GetsRunnable(
 	}.Or(builder.Eq{
 		column.Status.String(): task.StatusFailed, // 已经处于错误状态的任务
 	}))
+
 	// 可被运行的条件二：任务已完成执行，但需要重启执行（可被循环执行的任务，达到下一次执行的条件）
 	recyclable := builder.Eq{ // 已经完成的任务，需要重新执行
 		column.Status.String(): task.StatusSuccess, // 已完成
 	}.And(builder.Eq{
 		column.Times.String(): 0, // 次数被重置
 	})
+
 	// 可被运行的条件三：因各种问题中断执行
 	interrupted := builder.Lte{
-		column.Next.String(): time.Now().Add(-maximum), // 超过配置时间的最大运行时间段
+		column.Next.String(): time.Now().Add(-24 * time.Hour), // 超过最大运行时间段
 	}.And(builder.Eq{
 		column.Status.String(): task.StatusRunning, // 运行中
 	}.Or(builder.Eq{
@@ -77,7 +77,7 @@ func (t *Task) GetsRunnable(
 	entities := make([]*model.Task, 0)
 	tasks = &entities
 	cond := required.And(created.Or(recyclable).Or(interrupted)).And(excludeTasks)
-	err = t.db.Where(cond).Limit(count).OrderBy(column.Created.Asc()).Find(tasks)
+	err = t.db.Where(cond).OrderBy(column.Created.Asc()).Find(tasks)
 
 	return
 }

@@ -1,4 +1,4 @@
-package config
+package core
 
 import (
 	"github.com/pangum/pangu"
@@ -6,6 +6,6 @@ import (
 
 func init() {
 	pangu.New().Get().Dependency().Puts(
-		retry,
+		newTasker,
 	).Build().Apply()
 }
