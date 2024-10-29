@@ -5,7 +5,8 @@ import (
 )
 
 func init() {
-	pangu.New().Get().Dependency().Puts(
-		newTasker,
-	).Build().Apply()
+	pangu.New().Get().Dependency().
+		Put(newTasker).Name("pangum.taskd").Group("tasker").Build().
+		Build().
+		Apply()
 }
