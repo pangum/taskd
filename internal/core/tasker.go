@@ -25,7 +25,7 @@ type Tasker struct {
 	times    uint32
 }
 
-func newTasker(get get.Runnable) *Tasker {
+func newTasker(get get.Runnable) task.Tasker {
 	return &Tasker{
 		task:      get.Repository,
 		scheduler: get.Scheduler,
@@ -82,7 +82,7 @@ func (t *Tasker) Next(id uint64) (err error) {
 	return
 }
 
-func (t *Tasker) Pop() (runnable task.Task, exists bool) {
+func (t *Tasker) Pop(_ uint32) (runnable task.Task, exists bool) {
 	t.runnable.Range(func(key, value any) (next bool) {
 		runnable = value.(task.Task)
 		next = false

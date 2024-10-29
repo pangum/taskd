@@ -2,8 +2,8 @@ package get
 
 import (
 	"github.com/goexl/log"
-	"github.com/goexl/schedule"
 	"github.com/pangum/pangu"
+	"github.com/pangum/schedule"
 	"github.com/pangum/taskd/internal/internal/repository"
 )
 

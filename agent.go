@@ -1,6 +1,8 @@
 package taskd
 
 import (
+	_ "github.com/pangum/taskd/internal/core"
+
 	"github.com/goexl/task"
 )
 

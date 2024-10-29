@@ -9,6 +9,6 @@ import (
 // Schedule 计划
 type Schedule = core.Schedule
 
-func newSchedule(database get.Database) Schedule {
-	return mysql.NewSchedule(database)
+func newSchedule(tx get.Transaction) Schedule {
+	return mysql.NewSchedule(tx)
 }
