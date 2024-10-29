@@ -2,7 +2,7 @@ package core
 
 import (
 	"context"
-	"sync"
+	"github.com/pangum/taskd/internal/internal/core"
 	"time"
 
 	"github.com/goexl/gox"
@@ -15,21 +15,23 @@ import (
 )
 
 type Tasker struct {
-	schedule  repository.Schedule
-	task      repository.Task
-	scheduler *schedule.Scheduler
+	schedule repository.Schedule
+	task     repository.Task
 
-	runnable *sync.Map
-	logger   log.Logger
-	id       string
-	times    uint32
+	scheduler *schedule.Scheduler
+	runnable  *core.Runnable
+	logger    log.Logger
+	id        string
+	times     uint32
 }
 
-func newTasker(get get.Runnable) task.Tasker {
+func newTasker(tasker get.Tasker) task.Tasker {
 	return &Tasker{
-		task:      get.Repository,
-		scheduler: get.Scheduler,
-		logger:    get.Logger,
+		task: tasker.Repository,
+
+		scheduler: tasker.Scheduler,
+		logger:    tasker.Logger,
+		runnable:  tasker.Runnable,
 	}
 }
 
@@ -82,13 +84,9 @@ func (t *Tasker) Next(id uint64) (err error) {
 	return
 }
 
-func (t *Tasker) Pop(_ uint32) (runnable task.Task, exists bool) {
-	t.runnable.Range(func(key, value any) (next bool) {
-		runnable = value.(task.Task)
-		next = false
-
-		return
-	})
+func (t *Tasker) Pop(times uint32) (tasks []task.Task, exists bool) {
+	tasks = t.runnable.Tasks()
+	t.times = times
 
 	return
 }
@@ -97,9 +95,8 @@ func (t *Tasker) Run() (err error) {
 	if tasks, re := t.task.GetsRunnable(t.times); nil != re {
 		err = re
 	} else if 0 != len(*tasks) {
-		for _, _task := range *tasks {
-			t.runnable.Store(_task.Id, _task)
-		}
+		all := *tasks
+		t.runnable.Put(all[0], all[1:]...)
 	}
 
 	return

@@ -6,7 +6,7 @@ import (
 )
 
 type Schedule interface {
-	Add(schedule task.Schedule) error
+	Add(schedule task.Schedule) (task.Task, error)
 
 	Get(schedule *model.Schedule, columns ...string) (bool, error)
 
