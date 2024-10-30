@@ -10,6 +10,7 @@ type synchronizer struct {
 
 func (*synchronizer) Sync(synchronizer *db.Synchronizer) error {
 	return synchronizer.Sync(
+		new(Schedule),
 		new(Task),
 	)
 }

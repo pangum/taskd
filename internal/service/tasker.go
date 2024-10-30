@@ -1,9 +1,11 @@
-package core
+package service
 
 import (
 	"context"
-	"github.com/pangum/taskd/internal/internal/core"
 	"time"
+
+	"github.com/pangum/taskd/internal/internal/core"
+	"github.com/pangum/taskd/internal/internal/model"
 
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
@@ -27,7 +29,8 @@ type Tasker struct {
 
 func newTasker(tasker get.Tasker) task.Tasker {
 	return &Tasker{
-		task: tasker.Repository,
+		schedule: tasker.Schedule,
+		task:     tasker.Task,
 
 		scheduler: tasker.Scheduler,
 		logger:    tasker.Logger,
@@ -59,24 +62,55 @@ func (t *Tasker) Stop(_ context.Context) (err error) {
 }
 
 func (t *Tasker) Add(schedule task.Schedule) (err error) {
-	if ae := t.schedule.Add(schedule); nil != ae {
+	_schedule := new(model.Schedule)
+	if 0 != schedule.Id() {
+		_schedule.Id = schedule.Id()
+	}
+
+	_schedule.Type = schedule.Type()
+	_schedule.Subtype = schedule.Subtype()
+	_schedule.Target = schedule.Target()
+	_schedule.Data = schedule.Data()
+	if _task, ae := t.schedule.Add(_schedule, schedule.Next()); nil != ae {
 		err = ae
-	} else if schedule.Next().Before(time.Now()) {
-		t.runnable.Store(schedule.Id(), schedule) // TODO 放进准备运行的列表
+	} else if _task.Next.Before(time.Now()) {
+		t.runnable.Put(_task)
 	}
 
 	return
 }
 
-func (t *Tasker) Remove(scheduling task.Schedule) (err error) {
+func (t *Tasker) Remove(schedule task.Schedule) (err error) {
+	_schedule := new(model.Schedule)
+	_schedule.Id = schedule.Id()
+	if _, de := t.schedule.Delete(_schedule); nil != de {
+		err = de
+	}
+
 	return
 }
 
 func (t *Tasker) Running(id uint64, status task.Status, retries uint32) (err error) {
+	_task := new(model.Task)
+	_task.Id = id
+	_task.Status = status
+	_task.Retries = retries
+	if _, ue := t.task.Update(_task); nil != ue {
+		err = ue
+	}
+
 	return
 }
 
 func (t *Tasker) Update(id uint64, status task.Status, runtime time.Time) (err error) {
+	_task := new(model.Task)
+	_task.Id = id
+	_task.Status = status
+	_task.Next = runtime
+	if _, ue := t.task.Update(_task); nil != ue {
+		err = ue
+	}
+
 	return
 }
 

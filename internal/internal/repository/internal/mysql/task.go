@@ -77,7 +77,7 @@ func (t *Task) GetsRunnable(times uint32, excludes ...*model.Task) (tasks *[]*mo
 	entities := make([]*model.Task, 0)
 	tasks = &entities
 	cond := required.And(created.Or(recyclable).Or(interrupted)).And(excludeTasks)
-	err = t.db.Where(cond).OrderBy(column.Created.Asc()).Find(tasks)
+	err = t.db.Where(cond).Limit(1024).OrderBy(column.Created.Asc()).Find(tasks) // 最大取1024个数据
 
 	return
 }

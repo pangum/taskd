@@ -1,4 +1,4 @@
-package core
+package service
 
 import (
 	"github.com/pangum/pangu"
@@ -6,7 +6,7 @@ import (
 
 func init() {
 	pangu.New().Get().Dependency().
-		Put(newTasker).Name("pangum.taskd").Group("tasker").Build().
+		Put(newTasker).Name("pangum.taskd").Build().
 		Build().
 		Apply()
 }

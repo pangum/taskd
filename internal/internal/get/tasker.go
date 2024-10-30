@@ -11,7 +11,8 @@ import (
 type Tasker struct {
 	pangu.Get
 
-	Repository repository.Task
+	Schedule repository.Schedule
+	Task     repository.Task
 
 	Runnable  *core.Runnable
 	Scheduler *schedule.Scheduler

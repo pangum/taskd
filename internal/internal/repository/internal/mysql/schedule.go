@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"github.com/pangum/taskd/internal/internal/kernel"
 	"time"
 
 	"github.com/goexl/id"
@@ -25,8 +24,11 @@ func NewSchedule(database get.Transaction) *Schedule {
 	}
 }
 
-func (s *Schedule) Add(schedule task.Schedule) (task task.Task, err error) {
-	return s.tx.Do(s.add(schedule))
+func (s *Schedule) Add(schedule *model.Schedule, next time.Time) (runnable *model.Task, err error) {
+	runnable = new(model.Task)
+	err = s.tx.Do(s.add(schedule, runnable, next))
+
+	return
 }
 
 func (s *Schedule) Get(schedule *model.Schedule, columns ...string) (bool, error) {
@@ -41,47 +43,26 @@ func (s *Schedule) Delete(schedule *model.Schedule) (int64, error) {
 	return s.db.Delete(schedule)
 }
 
-func (s *Schedule) add(schedule task.Schedule, task task.Task) func(session *db.Session) error {
+func (s *Schedule) add(schedule *model.Schedule, runnable *model.Task, next time.Time) func(session *db.Session) error {
 	return func(session *db.Session) (err error) {
-		if _, saved, ase := s.addSchedule(session, schedule); nil != ase {
-			err = ase
-		} else if _, ate := s.addTask(session, saved, task); nil != ate {
-			err = ate
+		if 0 == schedule.Id {
+			schedule.Id = s.id.Next().Value()
+		}
+
+		if _, ie := session.Insert(schedule); nil != ie {
+			err = ie
+		} else {
+			runnable.Id = s.id.Next().Value()
+			runnable.Next = next
+			runnable.Status = task.StatusCreated
+
+			now := time.Now()
+			runnable.Start = now
+			runnable.Stop = now.Add(schedule.Elapsed)
+
+			_, err = session.Insert(runnable)
 		}
 
 		return
 	}
-}
-
-func (s *Schedule) addSchedule(session *db.Session, schedule task.Schedule) (affected int64, saved *model.Schedule, err error) {
-	saved = new(model.Schedule)
-	if 0 == schedule.Id() {
-		saved.Id = s.id.Next().Value()
-	} else {
-		saved.Id = s.id.Next().Value()
-	}
-
-	saved.Type = schedule.Type()
-	saved.Subtype = schedule.Subtype()
-	saved.Target = schedule.Target()
-	saved.Data = schedule.Data()
-
-	return session.Insert(saved)
-}
-
-func (s *Schedule) addTask(session *db.Session, schedule *model.Schedule, task task.Task) (affected int64, err error) {
-	saved := new(model.Task)
-	saved.Id = s.id.Next().Value()
-	saved.Next = schedule.Next()
-	saved.Status = task.StatusCreated
-
-	now := time.Now()
-	saved.Start = now
-	saved.Stop = now.Add(schedule.Elapsed())
-
-	if affected, err = session.Insert(saved); nil == err {
-		task = kernel.NewTaskSchedule(schedule, saved)
-	}
-
-	return
 }

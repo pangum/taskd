@@ -2,6 +2,8 @@ package core
 
 import (
 	"github.com/goexl/task"
+	"github.com/pangum/taskd/internal/internal/model"
+
 	"sync"
 )
 
@@ -15,7 +17,7 @@ func NewRunnable() *Runnable {
 	}
 }
 
-func (r *Runnable) Put(required task.Task, others ...task.Task) {
+func (r *Runnable) Put(required *model.Task, others ...*model.Task) {
 
 }
 

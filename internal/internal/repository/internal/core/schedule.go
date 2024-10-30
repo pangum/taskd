@@ -1,16 +1,17 @@
 package core
 
 import (
-	"github.com/goexl/task"
+	"time"
+
 	"github.com/pangum/taskd/internal/internal/model"
 )
 
 type Schedule interface {
-	Add(schedule task.Schedule) (task.Task, error)
+	Add(*model.Schedule, time.Time) (*model.Task, error)
 
-	Get(schedule *model.Schedule, columns ...string) (bool, error)
+	Get(*model.Schedule, ...string) (bool, error)
 
-	Update(schedule *model.Schedule, columns ...string) (int64, error)
+	Update(*model.Schedule, ...string) (int64, error)
 
-	Delete(schedule *model.Schedule) (int64, error)
+	Delete(*model.Schedule) (int64, error)
 }
