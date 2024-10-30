@@ -6,20 +6,20 @@ import (
 	"github.com/pangum/taskd/internal/internal/repository"
 )
 
-var _ task.Task = (*TaskModel)(nil)
+var _ task.Task = (*Task)(nil)
 
-type TaskModel struct {
+type Task struct {
 	task       *model.Task
 	repository repository.Schedule
 }
 
-func NewTaskModel(task *model.Task, repository repository.Schedule) *TaskModel {
-	return &TaskModel{
+func NewTask(task *model.Task, repository repository.Schedule) *Task {
+	return &Task{
 		task:       task,
 		repository: repository,
 	}
 }
 
-func (t *TaskModel) Id() uint64 {
+func (t *Task) Id() uint64 {
 	return t.task.Id
 }

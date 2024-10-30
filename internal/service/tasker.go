@@ -114,10 +114,6 @@ func (t *Tasker) Update(id uint64, status task.Status, runtime time.Time) (err e
 	return
 }
 
-func (t *Tasker) Next(id uint64) (err error) {
-	return
-}
-
 func (t *Tasker) Pop(times uint32) (tasks []task.Task, exists bool) {
 	tasks = t.runnable.Tasks()
 	t.times = times

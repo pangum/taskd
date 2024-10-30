@@ -29,6 +29,9 @@ type Task struct {
 	// 状态
 	// nolint:lll
 	Status task.Status `xorm:"tinyint notnull index(next) default(0) comment(状态，分别是：1、已创建；2、执行中；3、重试中；10、失败；20、成功)" json:"status,omitempty"`
+
+	// 以下字段用于取值而不能存到数据中
+	Scheduler Schedule `xorm:"extends <-"`
 }
 
 func (*Task) TableComment() string {
