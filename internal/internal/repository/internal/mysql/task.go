@@ -105,7 +105,7 @@ func (t *Task) Archive(task *model.Task) (affected int64, err error) {
 	return
 }
 
-func (t *Task) Delete(task *model.Task) (int64, error) {
+func (t *Task) Delete(task *model.Task) (affected int64, err error) {
 	if err = t.tx.Do(t.delete(task)); nil == err {
 		affected = 1
 	}

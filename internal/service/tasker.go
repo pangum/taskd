@@ -137,7 +137,7 @@ func (t *Tasker) Archive(task task.Task) (err error) {
 	return
 }
 
-func (t *Tasker) Faield(task task.Task) (err error) {
+func (t *Tasker) Failed(_ task.Task) (err error) {
 	return
 }
 
