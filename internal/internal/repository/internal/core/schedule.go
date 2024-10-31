@@ -7,7 +7,7 @@ import (
 )
 
 type Schedule interface {
-	Add(*model.Schedule, time.Time) (*model.Task, error)
+	Add(*model.Schedule, time.Time) (*model.Tasker, error)
 
 	Get(*model.Schedule, ...string) (bool, error)
 

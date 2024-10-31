@@ -10,8 +10,7 @@ import (
 )
 
 type Task struct {
-	model.Base       `xorm:"extends"`
-	model.Optimistic `xorm:"extends"` // 使用乐观锁，优化重试时的性能
+	model.Base `xorm:"extends"`
 
 	// 计划
 	Schedule uint64 `xorm:"bigint notnull index(target) default(0) comment(计划)" json:"schedule,omitempty"`
@@ -25,13 +24,10 @@ type Task struct {
 	// nolint:lll
 	Stop time.Time `xorm:"datetime notnull index(next) default(CURRENT_TIMESTAMP) comment(结束时间)" json:"stop,omitempty"`
 	// 重试次数
-	Retries uint32 `xorm:"int notnull default(0) comment(重试次数)" json:"retries,omitempty"`
+	Times uint32 `xorm:"int notnull default(0) comment(重试次数)" json:"times,omitempty"`
 	// 状态
 	// nolint:lll
 	Status task.Status `xorm:"tinyint notnull index(next) default(0) comment(状态，分别是：1、已创建；2、执行中；3、重试中；10、失败；20、成功)" json:"status,omitempty"`
-
-	// 以下字段用于取值而不能存到数据中
-	Scheduler Schedule `xorm:"extends <-"`
 }
 
 func (*Task) TableComment() string {

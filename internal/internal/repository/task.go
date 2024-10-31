@@ -9,6 +9,6 @@ import (
 // Task 任务
 type Task = core.Task
 
-func newTask(database get.Database) Task {
-	return mysql.NewTask(database)
+func newTask(tx get.Transaction) Task {
+	return mysql.NewTask(tx)
 }

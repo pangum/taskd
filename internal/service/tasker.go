@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/goexl/exception"
 	"github.com/pangum/taskd/internal/internal/core"
 	"github.com/pangum/taskd/internal/internal/model"
 
@@ -23,8 +24,9 @@ type Tasker struct {
 	scheduler *schedule.Scheduler
 	runnable  *core.Runnable
 	logger    log.Logger
-	id        string
-	times     uint32
+
+	id      string
+	retries uint32
 }
 
 func newTasker(tasker get.Tasker) task.Tasker {
@@ -94,7 +96,7 @@ func (t *Tasker) Running(id uint64, status task.Status, retries uint32) (err err
 	_task := new(model.Task)
 	_task.Id = id
 	_task.Status = status
-	_task.Retries = retries
+	_task.Times = retries
 	if _, ue := t.task.Update(_task); nil != ue {
 		err = ue
 	}
@@ -114,15 +116,33 @@ func (t *Tasker) Update(id uint64, status task.Status, runtime time.Time) (err e
 	return
 }
 
-func (t *Tasker) Pop(times uint32) (tasks []task.Task, exists bool) {
+func (t *Tasker) Pop(retries uint32) (tasks []task.Task) {
 	tasks = t.runnable.Tasks()
-	t.times = times
+	t.retries = retries
 
 	return
 }
 
+func (t *Tasker) Archive(task task.Task) (err error) {
+	_task := new(model.Task)
+	_task.Id = task.Id()
+	if exists, ge := t.task.Get(_task); nil != ge {
+		err = ge
+	} else if !exists {
+		err = exception.New().Message("任务不存在").Field(field.New("task", task)).Build()
+	} else if _, ae := t.task.Archive(_task); nil != ae {
+		err = ae
+	}
+
+	return
+}
+
+func (t *Tasker) Faield(task task.Task) (err error) {
+	return
+}
+
 func (t *Tasker) Run() (err error) {
-	if tasks, re := t.task.GetsRunnable(t.times); nil != re {
+	if tasks, re := t.task.GetsRunnable(t.retries); nil != re {
 		err = re
 	} else if 0 != len(*tasks) {
 		all := *tasks

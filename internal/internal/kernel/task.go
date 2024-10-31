@@ -1,6 +1,8 @@
 package kernel
 
 import (
+	"time"
+
 	"github.com/goexl/task"
 	"github.com/pangum/taskd/internal/internal/model"
 )
@@ -8,10 +10,10 @@ import (
 var _ task.Task = (*Task)(nil)
 
 type Task struct {
-	task *model.Task
+	task *model.Tasker
 }
 
-func NewTask(task *model.Task) *Task {
+func NewTask(task *model.Tasker) *Task {
 	return &Task{
 		task: task,
 	}
@@ -35,4 +37,16 @@ func (t *Task) Subtype() task.Type {
 
 func (t *Task) Retries() uint32 {
 	return t.task.Retries
+}
+
+func (t *Task) Elapsed() time.Duration {
+	return t.task.Elapsed
+}
+
+func (t *Task) Data() map[string]any {
+	return t.task.Data
+}
+
+func (t *Task) Next() time.Time {
+	return t.task.Next
 }

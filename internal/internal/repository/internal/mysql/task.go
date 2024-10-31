@@ -15,12 +15,18 @@ import (
 type Task struct {
 	id id.Generator
 	db *db.Engine
+	tx *db.Transaction
+
+	table *model.Task
 }
 
-func NewTask(database get.Database) *Task {
+func NewTask(tx get.Transaction) *Task {
 	return &Task{
-		id: database.Id,
-		db: database.DB,
+		id: tx.Id,
+		db: tx.DB,
+		tx: tx.Transaction,
+
+		table: new(model.Task),
 	}
 }
 
@@ -36,14 +42,15 @@ func (t *Task) Get(task *model.Task, columns ...string) (bool, error) {
 	return t.db.Cols(columns...).Get(task)
 }
 
-func (t *Task) GetsRunnable(times uint32, excludes ...*model.Task) (tasks *[]*model.Task, err error) {
+func (t *Task) GetsRunnable(retries uint32, excludes ...*model.Task) (tasks *[]*model.Tasker, err error) {
+	now := time.Now()
 	required := builder.Lte{
-		column.Times.String(): times, // 还没有到最大重试次数
+		column.Times.String(): retries, // 还没有到最大重试次数
 	}
 
 	// 可被运行的条件一：运行时间已到且状态是被认可可被重新执行
 	created := builder.Lte{
-		column.Next.String(): time.Now(), // 运行时间已到
+		column.Next.String(): now, // 运行时间已到
 	}.And(builder.Eq{
 		column.Status.String(): task.StatusCreated, // 刚创建的任务
 	}.Or(builder.Eq{
@@ -59,7 +66,7 @@ func (t *Task) GetsRunnable(times uint32, excludes ...*model.Task) (tasks *[]*mo
 
 	// 可被运行的条件三：因各种问题中断执行
 	interrupted := builder.Lte{
-		column.Next.String(): time.Now().Add(-24 * time.Hour), // 超过最大运行时间段
+		column.Stop.String(): now, // 超过最大运行时间段
 	}.And(builder.Eq{
 		column.Status.String(): task.StatusRunning, // 运行中
 	}.Or(builder.Eq{
@@ -74,10 +81,14 @@ func (t *Task) GetsRunnable(times uint32, excludes ...*model.Task) (tasks *[]*mo
 		})
 	}
 
-	entities := make([]*model.Task, 0)
+	entities := make([]*model.Tasker, 0)
 	tasks = &entities
 	cond := required.And(created.Or(recyclable).Or(interrupted)).And(excludeTasks)
-	err = t.db.Where(cond).Limit(1024).OrderBy(column.Created.Asc()).Join("INNER", "schedule", "schedule.id = task.schedule").Find(tasks) // 最大取1024个数据
+
+	session := t.db.Table(t.table).Where(cond)
+	session.Limit(1024) // 最大取1024个数据
+	session.Join("INNER", "schedule", "schedule.id = task.schedule")
+	err = session.Find(tasks)
 
 	return
 }
@@ -86,6 +97,40 @@ func (t *Task) Update(task *model.Task, columns ...string) (int64, error) {
 	return t.db.ID(task.Id).MustCols(columns...).Update(task)
 }
 
+func (t *Task) Archive(task *model.Task) (affected int64, err error) {
+	if err = t.tx.Do(t.delete(task)); nil == err {
+		affected = 1
+	}
+
+	return
+}
+
 func (t *Task) Delete(task *model.Task) (int64, error) {
-	return t.db.Delete(task)
+	if err = t.tx.Do(t.delete(task)); nil == err {
+		affected = 1
+	}
+
+	return
+}
+
+func (t *Task) delete(task *model.Task) func(session *db.Session) error {
+	return func(session *db.Session) (err error) {
+		deleted := new(model.Task)
+		deleted.Id = task.Id
+		if _, dse := session.Delete(deleted); nil != dse { // 删除计划本身
+			err = dse
+		} else if _, dte := t.deleteSchedule(session, task); nil != dte { // 删除对应的任务
+			err = dte
+		}
+
+		return
+	}
+}
+
+func (t *Task) deleteSchedule(session *db.Session, task *model.Task) (affected int64, err error) {
+	deleted := new(model.Schedule)
+	deleted.Id = task.Schedule
+	affected, err = session.Delete(deleted)
+
+	return
 }

@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/goexl/task"
+	"github.com/pangum/taskd/internal/internal/kernel"
 	"github.com/pangum/taskd/internal/internal/model"
 
 	"sync"
@@ -17,15 +18,16 @@ func NewRunnable() *Runnable {
 	}
 }
 
-func (r *Runnable) Put(required *model.Task, others ...*model.Task) {
-	for _, _task := range append([]*model.Task{required}, others...) {
-
+func (r *Runnable) Put(required *model.Tasker, others ...*model.Tasker) {
+	for _, _task := range append([]*model.Tasker{required}, others...) {
+		r.tasks.Store(_task.Id, kernel.NewTask(_task))
 	}
 }
 
 func (r *Runnable) Tasks() (tasks []task.Task) {
-	r.tasks.Range(func(key, value interface{}) (next bool) {
+	r.tasks.Range(func(key, value any) (next bool) {
 		tasks = append(tasks, value.(task.Task))
+		r.tasks.Delete(key)
 		next = true
 
 		return

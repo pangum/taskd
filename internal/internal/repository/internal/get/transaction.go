@@ -7,5 +7,5 @@ import (
 type Transaction struct {
 	Database
 
-	Tx *db.Transaction
+	Transaction *db.Transaction
 }

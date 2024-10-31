@@ -20,8 +20,8 @@ type Schedule struct {
 	Subtype task.Type `xorm:"smallint notnull index(next) default(0) comment(子类型，根据应用自身识别)" json:"subtype,omitempty"`
 	// 消耗时间
 	Elapsed time.Duration `xorm:"bigint notnull default(0) comment(最大消息时间)"`
-	// 重试次数
-	Retries uint32 `xorm:"int notnull default(0) comment(重试次数)" json:"retries,omitempty"`
+	// 最大重试次数
+	Retries uint32 `xorm:"int notnull default(0) comment(最大重试次数)" json:"retries,omitempty"`
 	// 数据
 	Data map[string]any `xorm:"json null comment(数据)" json:"data,omitempty"`
 }

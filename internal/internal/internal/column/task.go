@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	Status  gox.Column = "status"
-	Next    gox.Column = "next"
-	Elapsed gox.Column = "elapsed"
-	Times   gox.Column = "times"
+	Status gox.Column = "status"
+	Next   gox.Column = "next"
+	Stop   gox.Column = "stop"
+	Times  gox.Column = "times"
 )
