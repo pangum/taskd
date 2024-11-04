@@ -11,7 +11,7 @@ require (
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/task v0.1.9
 	github.com/pangum/db v0.2.2
-	github.com/pangum/pangu v1.4.9
+	github.com/pangum/pangu v1.5.3
 	github.com/pangum/schedule v0.1.2
 	xorm.io/builder v0.3.13
 )
@@ -20,7 +20,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.5 // indirect
 	github.com/drone/envsubst v1.0.3 // indirect
 	github.com/elliotchance/sshtunnel v1.6.1 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
