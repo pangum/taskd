@@ -3,15 +3,17 @@ module github.com/pangum/taskd
 go 1.23
 
 require (
+	github.com/goexl/collection v0.0.1
 	github.com/goexl/exception v0.0.1
 	github.com/goexl/gox v1.8.9
+	github.com/goexl/guc v0.1.5
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.7
 	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/task v0.1.9
 	github.com/pangum/db v0.2.2
-	github.com/pangum/pangu v1.4.8
+	github.com/pangum/pangu v1.5.6
 	github.com/pangum/schedule v0.1.2
 	xorm.io/builder v0.3.13
 )
@@ -20,7 +22,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.5 // indirect
 	github.com/drone/envsubst v1.0.3 // indirect
 	github.com/elliotchance/sshtunnel v1.6.1 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -29,7 +31,7 @@ require (
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
 	github.com/goexl/env v0.0.2 // indirect
-	github.com/goexl/gfx v0.2.3 // indirect
+	github.com/goexl/gfx v0.2.5 // indirect
 	github.com/goexl/mengpo v0.2.6 // indirect
 	github.com/goexl/structer v0.1.9 // indirect
 	github.com/goexl/xiren v0.0.8 // indirect
@@ -53,7 +55,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
-	github.com/tklauser/numcpus v0.8.0 // indirect
+	github.com/tklauser/numcpus v0.9.0 // indirect
 	github.com/urfave/cli/v2 v2.27.5 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
