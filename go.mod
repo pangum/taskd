@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/goexl/collection v0.0.1
-	github.com/goexl/exception v0.0.1
+	github.com/goexl/exception v0.0.3
 	github.com/goexl/gox v1.9.0
 	github.com/goexl/guc v0.1.5
 	github.com/goexl/id v0.0.6
