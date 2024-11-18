@@ -1,13 +1,11 @@
 package core
 
 import (
-	"time"
-
 	"github.com/pangum/taskd/internal/internal/model"
 )
 
 type Schedule interface {
-	Add(*model.Schedule, time.Time) (*model.Tasker, error)
+	Add(*model.Runtime, ...*model.Runtime) (*[]*model.Tasker, error)
 
 	Get(*model.Schedule, ...string) (bool, error)
 

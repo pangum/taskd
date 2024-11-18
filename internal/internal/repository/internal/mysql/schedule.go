@@ -24,9 +24,12 @@ func NewSchedule(database get.Transaction) *Schedule {
 	}
 }
 
-func (s *Schedule) Add(schedule *model.Schedule, next time.Time) (runnable *model.Tasker, err error) {
-	runnable = new(model.Tasker)
-	err = s.tx.Do(s.add(schedule, runnable, next))
+func (s *Schedule) Add(runtime *model.Runtime, runtimes ...*model.Runtime) (successes *[]*model.Tasker, err error) {
+	models := make([]*model.Tasker, 0, 1+len(runtimes))
+	saves := append([]*model.Runtime{runtime}, runtimes...)
+	if _, err = s.tx.Do(s.add(&saves, &models)); nil == err {
+		successes = &models
+	}
 
 	return
 }
@@ -39,75 +42,70 @@ func (s *Schedule) Update(schedule *model.Schedule, columns ...string) (int64, e
 	return s.db.ID(schedule.Id).MustCols(columns...).Update(schedule)
 }
 
-func (s *Schedule) Delete(schedule *model.Schedule) (affected int64, err error) {
-	if err = s.tx.Do(s.delete(schedule)); nil == err {
-		affected = 1
-	}
-
-	return
+func (s *Schedule) Delete(schedule *model.Schedule) (int64, error) {
+	return s.tx.Do(s.delete(schedule))
 }
 
-func (s *Schedule) delete(schedule *model.Schedule) func(session *db.Session) error {
-	return func(session *db.Session) (err error) {
+func (s *Schedule) delete(schedule *model.Schedule) func(session *db.Session) (int64, error) {
+	return func(session *db.Session) (affected int64, err error) {
 		deleted := new(model.Schedule)
 		deleted.Id = schedule.Id
-		if _, dse := session.Delete(deleted); nil != dse { // 删除计划本身
+		if ads, dse := session.Delete(deleted); nil != dse { // 删除计划本身
 			err = dse
-		} else if _, dte := s.deleteTask(session, schedule); nil != dte { // 删除对应的任务
+		} else if adt, dte := s.deleteTask(session, schedule); nil != dte { // 删除对应的任务
 			err = dte
-		}
-
-		return
-	}
-}
-
-func (s *Schedule) add(
-	schedule *model.Schedule,
-	runnable *model.Tasker, next time.Time,
-) func(session *db.Session) error {
-	return func(session *db.Session) (err error) {
-		if 0 == schedule.Id {
-			schedule.Id = s.id.Next().Value()
-		}
-
-		if _, ie := session.Insert(schedule); nil != ie {
-			err = ie
 		} else {
-			_, err = s.addTask(session, schedule, runnable, next)
+			affected = ads + adt
 		}
 
 		return
 	}
 }
 
-func (s *Schedule) addTask(
+func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) func(session *db.Session) (int64, error) {
+	return func(session *db.Session) (affected int64, err error) {
+		schedules := make([]any, 0, len(*runtimes))
+		for _, runtime := range *runtimes {
+			schedule := &runtime.Schedule
+			if 0 == schedule.Id {
+				schedule.Id = s.id.Next().Value()
+			}
+			schedules = append(schedules, schedule)
+		}
+
+		if ais, ie := session.Insert(schedules...); nil != ie {
+			err = ie
+		} else if aat, ate := s.addTasks(session, runtimes, successes); nil != ate {
+			err = ate
+		} else {
+			affected = ais + aat
+		}
+
+		return
+	}
+}
+
+func (s *Schedule) addTasks(
 	session *db.Session,
-	schedule *model.Schedule,
-	runnable *model.Tasker, next time.Time,
+	runtimes *[]*model.Runtime, successes *[]*model.Tasker,
 ) (affected int64, err error) {
-	saved := new(model.Task)
-	saved.Id = s.id.Next().Value()
-	saved.Schedule = schedule.Id
-	saved.Next = next
-	saved.Status = task.StatusCreated
+	tasks := make([]any, 0, len(*runtimes))
+	for _, runtime := range *runtimes {
+		_task := new(model.Task)
+		_task.Id = s.id.Next().Value()
+		_task.Schedule = runtime.Id
+		_task.Next = runtime.Next
+		_task.Status = task.StatusCreated
 
-	now := time.Now()
-	saved.Start = now
-	saved.Stop = now.Add(schedule.Elapsed)
+		now := time.Now()
+		_task.Start = now
+		_task.Stop = now.Add(runtime.Elapsed)
 
-	if affected, err = session.Insert(saved); nil == err {
-		runnable.Id = saved.Id
-		runnable.Start = saved.Start
-		runnable.Next = saved.Next
-		runnable.Stop = saved.Stop
-		runnable.Retries = saved.Times
-		runnable.Status = task.StatusCreated
+		tasks = append(tasks, _task)
+	}
 
-		runnable.Target = schedule.Target
-		runnable.Type = schedule.Type
-		runnable.Subtype = schedule.Subtype
-		runnable.Elapsed = schedule.Elapsed
-		runnable.Data = schedule.Data
+	if affected, err = session.Insert(tasks...); nil == err {
+		s.parseTasks(&tasks, runtimes, successes)
 	}
 
 	return
@@ -119,4 +117,27 @@ func (s *Schedule) deleteTask(session *db.Session, schedule *model.Schedule) (af
 	affected, err = session.Delete(deleted)
 
 	return
+}
+
+func (s *Schedule) parseTasks(tasks *[]any, runtimes *[]*model.Runtime, successes *[]*model.Tasker) {
+	for index, _task := range *tasks {
+		if converted, ok := _task.(*model.Task); ok {
+			success := new(model.Tasker)
+			success.Id = converted.Id
+			success.Start = converted.Start
+			success.Next = converted.Next
+			success.Stop = converted.Stop
+			success.Retries = converted.Times
+			success.Status = task.StatusCreated
+
+			schedule := (*runtimes)[index]
+			success.Target = schedule.Target
+			success.Type = schedule.Type
+			success.Subtype = schedule.Subtype
+			success.Elapsed = schedule.Elapsed
+			success.Data = schedule.Data
+
+			*successes = append(*successes, success)
+		}
+	}
 }

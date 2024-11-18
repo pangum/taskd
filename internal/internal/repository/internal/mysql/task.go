@@ -97,30 +97,24 @@ func (t *Task) Update(task *model.Task, columns ...string) (int64, error) {
 	return t.db.ID(task.Id).MustCols(columns...).Update(task)
 }
 
-func (t *Task) Archive(task *model.Task) (affected int64, err error) {
-	if err = t.tx.Do(t.delete(task)); nil == err {
-		affected = 1
-	}
-
-	return
+func (t *Task) Archive(task *model.Task) (int64, error) {
+	return t.tx.Do(t.delete(task))
 }
 
-func (t *Task) Delete(task *model.Task) (affected int64, err error) {
-	if err = t.tx.Do(t.delete(task)); nil == err {
-		affected = 1
-	}
-
-	return
+func (t *Task) Delete(task *model.Task) (int64, error) {
+	return t.tx.Do(t.delete(task))
 }
 
-func (t *Task) delete(task *model.Task) func(session *db.Session) error {
-	return func(session *db.Session) (err error) {
+func (t *Task) delete(task *model.Task) func(session *db.Session) (int64, error) {
+	return func(session *db.Session) (affected int64, err error) {
 		deleted := new(model.Task)
 		deleted.Id = task.Id
-		if _, dse := session.Delete(deleted); nil != dse { // 删除计划本身
+		if adt, dse := session.Delete(deleted); nil != dse { // 删除计划本身
 			err = dse
-		} else if _, dte := t.deleteSchedule(session, task); nil != dte { // 删除对应的任务
+		} else if ads, dte := t.deleteSchedule(session, task); nil != dte { // 删除对应的任务
 			err = dte
+		} else {
+			affected = adt + ads
 		}
 
 		return

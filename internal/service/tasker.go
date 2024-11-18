@@ -63,20 +63,20 @@ func (t *Tasker) Stop(_ context.Context) (err error) {
 	return
 }
 
-func (t *Tasker) Add(schedule task.Schedule) (err error) {
-	_schedule := new(model.Schedule)
-	if 0 != schedule.Id() {
-		_schedule.Id = schedule.Id()
+func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err error) {
+	runtimes := make([]*model.Runtime, 1+len(optionals))
+	for _, _schedule := range append([]task.Schedule{required}, optionals...) {
+		runtime := new(model.Runtime)
+		runtime.Type = _schedule.Type()
+		runtime.Subtype = _schedule.Subtype()
+		runtime.Target = _schedule.Target()
+		runtime.Data = _schedule.Data()
+		runtime.Next = _schedule.Next()
 	}
-
-	_schedule.Type = schedule.Type()
-	_schedule.Subtype = schedule.Subtype()
-	_schedule.Target = schedule.Target()
-	_schedule.Data = schedule.Data()
-	if _task, ae := t.schedule.Add(_schedule, schedule.Next()); nil != ae {
+	if successes, ae := t.schedule.Add(runtimes[0], runtimes[1:]...); nil != ae {
 		err = ae
-	} else if _task.Next.Before(time.Now()) {
-		t.runnable.Put(_task)
+	} else {
+		t.runnable.Put((*successes)[0], (*successes)[1:]...)
 	}
 
 	return

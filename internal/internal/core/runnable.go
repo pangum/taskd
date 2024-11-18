@@ -1,6 +1,8 @@
 package core
 
 import (
+	"time"
+
 	"github.com/goexl/collection"
 	"github.com/goexl/guc/collection/queue"
 	"github.com/goexl/task"
@@ -18,9 +20,11 @@ func newRunnable() *Runnable {
 	}
 }
 
-func (r *Runnable) Put(required *model.Tasker, others ...*model.Tasker) {
-	for _, _task := range append([]*model.Tasker{required}, others...) {
-		r.tasks.Enqueue(kernel.NewTask(_task))
+func (r *Runnable) Put(required *model.Tasker, optionals ...*model.Tasker) {
+	for _, tasker := range append([]*model.Tasker{required}, optionals...) {
+		if tasker.Next.Before(time.Now()) {
+			r.tasks.Enqueue(kernel.NewTask(tasker))
+		}
 	}
 }
 
