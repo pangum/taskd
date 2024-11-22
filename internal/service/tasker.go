@@ -64,7 +64,7 @@ func (t *Tasker) Stop(_ context.Context) (err error) {
 }
 
 func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err error) {
-	runtimes := make([]*model.Runtime, 1+len(optionals))
+	runtimes := make([]*model.Runtime, 0, 1+len(optionals))
 	for _, _schedule := range append([]task.Schedule{required}, optionals...) {
 		runtime := new(model.Runtime)
 		runtime.Type = _schedule.Type()
