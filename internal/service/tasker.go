@@ -68,6 +68,7 @@ func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err er
 	for _, _schedule := range append([]task.Schedule{required}, optionals...) {
 		runtime := new(model.Runtime)
 		runtime.Type = _schedule.Type()
+		runtime.Next = _schedule.Next()
 		runtime.Subtype = _schedule.Subtype()
 		runtime.Target = _schedule.Target()
 		runtime.Data = _schedule.Data()
