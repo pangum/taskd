@@ -72,7 +72,8 @@ func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err er
 		runtime.Subtype = _schedule.Subtype()
 		runtime.Target = _schedule.Target()
 		runtime.Data = _schedule.Data()
-		runtime.Next = _schedule.Next()
+
+		runtimes = append(runtimes, runtime)
 	}
 	if successes, ae := t.schedule.Add(runtimes[0], runtimes[1:]...); nil != ae {
 		err = ae
