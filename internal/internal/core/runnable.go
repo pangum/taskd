@@ -3,20 +3,20 @@ package core
 import (
 	"time"
 
-	"github.com/goexl/collection"
-	"github.com/goexl/guc/collection/queue"
+	"github.com/goexl/container"
+	"github.com/goexl/container/queue"
 	"github.com/goexl/task"
 	"github.com/pangum/taskd/internal/internal/kernel"
 	"github.com/pangum/taskd/internal/internal/model"
 )
 
 type Runnable struct {
-	tasks collection.Queue[task.Task]
+	tasks container.Queue[task.Task]
 }
 
 func newRunnable() *Runnable {
 	return &Runnable{
-		tasks: queue.NewBlocking[task.Task]().Build(),
+		tasks: queue.New[task.Task]().Blocking().Build(),
 	}
 }
 
@@ -28,6 +28,6 @@ func (r *Runnable) Put(required *model.Tasker, optionals ...*model.Tasker) {
 	}
 }
 
-func (r *Runnable) Tasks() (tasks []task.Task) {
+func (r *Runnable) Tasks() task.Task {
 	return r.tasks.Dequeue()
 }

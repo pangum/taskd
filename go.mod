@@ -3,15 +3,14 @@ module github.com/pangum/taskd
 go 1.23
 
 require (
-	github.com/goexl/collection v0.0.2
+	github.com/goexl/container v0.0.5
 	github.com/goexl/exception v0.0.3
 	github.com/goexl/gox v1.9.2
-	github.com/goexl/guc v0.1.5
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.7
 	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
-	github.com/goexl/task v0.2.1
+	github.com/goexl/task v0.2.2
 	github.com/pangum/db v0.2.3
 	github.com/pangum/pangu v1.5.7
 	github.com/pangum/schedule v0.1.2
@@ -23,7 +22,7 @@ require (
 	github.com/drone/envsubst v1.0.3 // indirect
 	github.com/elliotchance/sshtunnel v1.6.1 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.7 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
@@ -61,10 +60,10 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zs5460/art v0.3.0 // indirect
 	go.uber.org/dig v1.18.0 // indirect
-	golang.org/x/crypto v0.29.0 // indirect
-	golang.org/x/net v0.31.0 // indirect
-	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
+	golang.org/x/crypto v0.30.0 // indirect
+	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	xorm.io/core v0.7.3 // indirect
 	xorm.io/xorm v1.3.9 // indirect
 )
