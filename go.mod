@@ -3,7 +3,7 @@ module github.com/pangum/taskd
 go 1.23
 
 require (
-	github.com/goexl/container v0.0.5
+	github.com/goexl/container v0.0.6
 	github.com/goexl/exception v0.0.3
 	github.com/goexl/gox v1.9.2
 	github.com/goexl/id v0.0.6
