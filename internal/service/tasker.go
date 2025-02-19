@@ -119,7 +119,7 @@ func (t *Tasker) Update(id uint64, status task.Status, runtime time.Time) (err e
 }
 
 func (t *Tasker) Pop(retries uint32) (task task.Task) {
-	task = t.runnable.Tasks()
+	task = t.runnable.Task()
 	t.retries = retries
 
 	return

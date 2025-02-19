@@ -28,6 +28,6 @@ func (r *Runnable) Put(required *model.Tasker, optionals ...*model.Tasker) {
 	}
 }
 
-func (r *Runnable) Tasks() task.Task {
+func (r *Runnable) Task() task.Task {
 	return r.tasks.Dequeue()
 }

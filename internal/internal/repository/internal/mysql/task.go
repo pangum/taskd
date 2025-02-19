@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/goexl/id"
@@ -87,7 +88,10 @@ func (t *Task) GetsRunnable(retries uint32, excludes ...*model.Task) (tasks *[]*
 
 	session := t.db.Table(t.table).Where(cond)
 	session.Limit(1024) // 最大取1024个数据
-	session.Join("INNER", "schedule", "schedule.id = task.schedule")
+
+	taskTable := t.db.TableName(t.table)
+	scheduleTable := t.db.TableName(new(model.Schedule))
+	session.Join("INNER", scheduleTable, fmt.Sprintf("%s.id = %s.schedule", scheduleTable, taskTable))
 	err = session.Find(tasks)
 
 	return
