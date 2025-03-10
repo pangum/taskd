@@ -1,19 +1,19 @@
 module github.com/pangum/taskd
 
 go 1.23
+toolchain go1.24.1
 
 require (
 	github.com/goexl/container v0.0.7
 	github.com/goexl/exception v0.0.3
 	github.com/goexl/gox v1.9.2
-	github.com/goexl/guc v0.1.5
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.7
 	github.com/goexl/model v0.1.2
 	github.com/goexl/schedule v0.2.0
 	github.com/goexl/task v0.2.3
 	github.com/pangum/db v0.2.4
-	github.com/pangum/pangu v1.5.7
+	github.com/pangum/pangu v1.5.8
 	github.com/pangum/schedule v0.1.2
 	xorm.io/builder v0.3.13
 )
@@ -30,7 +30,6 @@ require (
 	github.com/go-playground/validator/v10 v10.25.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
-	github.com/goexl/collection v0.0.1 // indirect
 	github.com/goexl/env v0.0.2 // indirect
 	github.com/goexl/gfx v0.2.5 // indirect
 	github.com/goexl/mengpo v0.2.6 // indirect
@@ -57,15 +56,15 @@ require (
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.9.0 // indirect
-	github.com/urfave/cli/v2 v2.27.5 // indirect
+	github.com/urfave/cli/v2 v2.27.6 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zs5460/art v0.3.0 // indirect
-	go.uber.org/dig v1.18.0 // indirect
-	golang.org/x/crypto v0.33.0 // indirect
-	golang.org/x/net v0.35.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	go.uber.org/dig v1.18.1 // indirect
+	golang.org/x/crypto v0.36.0 // indirect
+	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	xorm.io/core v0.7.3 // indirect
 	xorm.io/xorm v1.3.9 // indirect
 )
