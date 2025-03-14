@@ -127,7 +127,7 @@ func (s *Schedule) parseTasks(tasks *[]any, runtimes *[]*model.Runtime, successe
 			success.Start = converted.Start
 			success.Next = converted.Next
 			success.Stop = converted.Stop
-			success.Retries = converted.Times
+			success.Times = converted.Times
 			success.Status = task.StatusCreated
 
 			schedule := (*runtimes)[index]

@@ -21,7 +21,7 @@ type Schedule struct {
 	// 消耗时间
 	Elapsed time.Duration `xorm:"bigint notnull default(0) comment(最大消息时间)"`
 	// 最大重试次数
-	Retries uint32 `xorm:"int notnull default(0) comment(最大重试次数)" json:"retries,omitempty"`
+	Maximum uint32 `xorm:"int notnull default(0) comment(最大重试次数)" json:"maximum,omitempty"`
 	// 数据
 	Data map[string]any `xorm:"longtext null comment(数据)" json:"data,omitempty"`
 }

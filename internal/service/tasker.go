@@ -25,8 +25,7 @@ type Tasker struct {
 	runnable  *core.Runnable
 	logger    log.Logger
 
-	id      string
-	retries uint32
+	id string
 }
 
 func newTasker(tasker get.Tasker) task.Tasker {
@@ -71,6 +70,7 @@ func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err er
 		runtime.Next = _schedule.Next()
 		runtime.Subtype = _schedule.Subtype()
 		runtime.Target = _schedule.Target()
+		runtime.Maximum = _schedule.Maximum()
 		runtime.Data = _schedule.Data()
 
 		runtimes = append(runtimes, runtime)
@@ -94,11 +94,11 @@ func (t *Tasker) Remove(schedule task.Schedule) (err error) {
 	return
 }
 
-func (t *Tasker) Running(id uint64, status task.Status, retries uint32) (err error) {
+func (t *Tasker) Running(id uint64, status task.Status, times uint32) (err error) {
 	_task := new(model.Task)
 	_task.Id = id
 	_task.Status = status
-	_task.Times = retries
+	_task.Times = times
 	if _, ue := t.task.Update(_task); nil != ue {
 		err = ue
 	}
@@ -118,11 +118,8 @@ func (t *Tasker) Update(id uint64, status task.Status, runtime time.Time) (err e
 	return
 }
 
-func (t *Tasker) Pop(retries uint32) (task task.Task) {
-	task = t.runnable.Task()
-	t.retries = retries
-
-	return
+func (t *Tasker) Pop() task.Task {
+	return t.runnable.Task()
 }
 
 func (t *Tasker) Archive(task task.Task) (err error) {
@@ -144,7 +141,7 @@ func (t *Tasker) Failed(_ task.Task) (err error) {
 }
 
 func (t *Tasker) Run() (err error) {
-	if tasks, re := t.task.GetsRunnable(t.retries); nil != re {
+	if tasks, re := t.task.GetsRunnable(); nil != re {
 		err = re
 	} else if 0 != len(*tasks) {
 		all := *tasks

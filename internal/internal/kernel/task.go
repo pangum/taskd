@@ -35,8 +35,12 @@ func (t *Task) Subtype() task.Type {
 	return t.task.Subtype
 }
 
-func (t *Task) Retries() uint32 {
-	return t.task.Retries
+func (t *Task) Maximum() uint32 {
+	return t.task.Maximum
+}
+
+func (t *Task) Times() uint32 {
+	return t.task.Times
 }
 
 func (t *Task) Elapsed() time.Duration {

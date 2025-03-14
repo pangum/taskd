@@ -9,7 +9,7 @@ type Task interface {
 
 	Get(task *model.Task, columns ...string) (bool, error)
 
-	GetsRunnable(retries uint32, excludes ...*model.Task) (*[]*model.Tasker, error)
+	GetsRunnable(excludes ...*model.Task) (*[]*model.Tasker, error)
 
 	Update(task *model.Task, columns ...string) (int64, error)
 

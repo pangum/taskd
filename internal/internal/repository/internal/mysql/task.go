@@ -43,14 +43,11 @@ func (t *Task) Get(task *model.Task, columns ...string) (bool, error) {
 	return t.db.Cols(columns...).Get(task)
 }
 
-func (t *Task) GetsRunnable(retries uint32, excludes ...*model.Task) (tasks *[]*model.Tasker, err error) {
+func (t *Task) GetsRunnable(excludes ...*model.Task) (tasks *[]*model.Tasker, err error) {
 	now := time.Now()
-	required := builder.Lte{
-		column.Times.String(): retries, // 还没有到最大重试次数
-	}
 
 	// 可被运行的条件一：运行时间已到且状态是被认可可被重新执行
-	created := builder.Lte{
+	timeout := builder.Lte{
 		column.Next.String(): now, // 运行时间已到
 	}.And(builder.Eq{
 		column.Status.String(): task.StatusCreated, // 刚创建的任务
@@ -59,7 +56,7 @@ func (t *Task) GetsRunnable(retries uint32, excludes ...*model.Task) (tasks *[]*
 	}))
 
 	// 可被运行的条件二：任务已完成执行，但需要重启执行（可被循环执行的任务，达到下一次执行的条件）
-	recyclable := builder.Eq{ // 已经完成的任务，需要重新执行
+	restarted := builder.Eq{ // 已经完成的任务，需要重新执行
 		column.Status.String(): task.StatusSuccess, // 已完成
 	}.And(builder.Eq{
 		column.Times.String(): 0, // 次数被重置
@@ -84,9 +81,9 @@ func (t *Task) GetsRunnable(retries uint32, excludes ...*model.Task) (tasks *[]*
 
 	entities := make([]*model.Tasker, 0)
 	tasks = &entities
-	cond := required.And(created.Or(recyclable).Or(interrupted)).And(excludeTasks)
+	condition := timeout.Or(restarted).Or(interrupted).And(excludeTasks)
 
-	session := t.db.Table(t.table).Where(cond)
+	session := t.db.Table(t.table).Where(condition)
 	session.Limit(1024) // 最大取1024个数据
 
 	taskTable := t.db.TableName(t.table)

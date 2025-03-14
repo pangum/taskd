@@ -19,7 +19,9 @@ type Tasker struct {
 	// 消耗时间
 	Elapsed time.Duration `json:"elapsed,omitempty"`
 	// 最大重试次数
-	Retries uint32 `json:"retries,omitempty"`
+	Maximum uint32 `json:"maximum,omitempty"`
+	// 当前运行次数
+	Times uint32 `json:"times,omitempty"`
 	// 数据
 	Data map[string]any `json:"data,omitempty"`
 
