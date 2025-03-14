@@ -99,7 +99,7 @@ func (s *Schedule) addTasks(
 
 		now := time.Now()
 		_task.Start = now
-		_task.Stop = now.Add(runtime.Elapsed)
+		_task.Stop = now.Add(runtime.Timeout)
 
 		tasks = append(tasks, _task)
 	}
@@ -134,7 +134,8 @@ func (s *Schedule) parseTasks(tasks *[]any, runtimes *[]*model.Runtime, successe
 			success.Target = schedule.Target
 			success.Type = schedule.Type
 			success.Subtype = schedule.Subtype
-			success.Elapsed = schedule.Elapsed
+			success.Maximum = schedule.Maximum
+			success.Timeout = schedule.Timeout
 			success.Data = schedule.Data
 
 			*successes = append(*successes, success)

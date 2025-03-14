@@ -18,8 +18,8 @@ type Schedule struct {
 	// 子类型
 	// nolint:lll
 	Subtype task.Type `xorm:"smallint notnull index(next) default(0) comment(子类型，根据应用自身识别)" json:"subtype,omitempty"`
-	// 消耗时间
-	Elapsed time.Duration `xorm:"bigint notnull default(0) comment(最大消息时间)"`
+	// 超时时间
+	Timeout time.Duration `xorm:"bigint notnull default(0) comment(任务超时时间)" json:"timeout,omitempty"`
 	// 最大重试次数
 	Maximum uint32 `xorm:"int notnull default(0) comment(最大重试次数)" json:"maximum,omitempty"`
 	// 数据

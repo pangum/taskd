@@ -16,8 +16,8 @@ type Tasker struct {
 	Type task.Type `json:"type,omitempty"`
 	// 子类型
 	Subtype task.Type `json:"subtype,omitempty"`
-	// 消耗时间
-	Elapsed time.Duration `json:"elapsed,omitempty"`
+	// 超时时间
+	Timeout time.Duration `json:"timeout,omitempty"`
 	// 最大重试次数
 	Maximum uint32 `json:"maximum,omitempty"`
 	// 当前运行次数

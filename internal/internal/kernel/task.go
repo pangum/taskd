@@ -43,8 +43,8 @@ func (t *Task) Times() uint32 {
 	return t.task.Times
 }
 
-func (t *Task) Elapsed() time.Duration {
-	return t.task.Elapsed
+func (t *Task) Timeout() time.Duration {
+	return t.task.Timeout
 }
 
 func (t *Task) Data() map[string]any {
