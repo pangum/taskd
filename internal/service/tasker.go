@@ -71,6 +71,7 @@ func (t *Tasker) Add(required task.Schedule, optionals ...task.Schedule) (err er
 		runtime.Subtype = _schedule.Subtype()
 		runtime.Target = _schedule.Target()
 		runtime.Maximum = _schedule.Maximum()
+		runtime.Elapsed = _schedule.Elapsed()
 		runtime.Data = _schedule.Data()
 
 		runtimes = append(runtimes, runtime)
