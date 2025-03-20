@@ -9,7 +9,7 @@ require (
 	github.com/goexl/id v0.0.6
 	github.com/goexl/log v0.0.9
 	github.com/goexl/model v0.1.2
-	github.com/goexl/schedule v0.2.0
+	github.com/goexl/schedule v0.2.1
 	github.com/goexl/task v0.2.3
 	github.com/pangum/db v0.2.4
 	github.com/pangum/pangu v1.5.9
@@ -38,7 +38,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/lufia/plan9stats v0.0.0-20250303091104-876f3ea5145d // indirect
+	github.com/lufia/plan9stats v0.0.0-20250317134145-8bc96cf8fc35 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
