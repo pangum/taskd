@@ -44,12 +44,12 @@ func (t *Tasker) Start(_ context.Context) (err error) {
 	fields := gox.Fields[any]{
 		field.New("name", name),
 	}
-	if id, ae := t.scheduler.Add(t).Duration(3 * time.Second).Name(name).Build().Apply(); nil != ae {
+	if rid, ae := t.scheduler.Add(t).Duration(3 * time.Second).Name(name).Build().Apply(); nil != ae {
 		err = ae
 		t.logger.Error("添加任务出错", fields.Add(field.Error(ae))...)
 	} else {
-		t.id = id
-		t.logger.Info("添加任务成功", fields.Add(field.New("id", id))...)
+		t.id = rid
+		t.logger.Info("添加任务成功", fields.Add(field.New("id", rid))...)
 	}
 
 	return

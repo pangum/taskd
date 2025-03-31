@@ -67,9 +67,6 @@ func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) f
 		schedules := make([]any, 0, len(*runtimes))
 		for _, runtime := range *runtimes {
 			schedule := &runtime.Schedule
-			if 0 == schedule.Id {
-				schedule.Id = s.id.Next().Value()
-			}
 			schedules = append(schedules, schedule)
 		}
 
@@ -91,8 +88,7 @@ func (s *Schedule) addTasks(
 ) (affected int64, err error) {
 	tasks := make([]any, 0, len(*runtimes))
 	for _, runtime := range *runtimes {
-		_task := new(model.Task)
-		_task.Id = s.id.Next().Value()
+		_task := new(model.Task) // !不用设置标识，通过事件注入
 		_task.Schedule = runtime.Id
 		_task.Next = runtime.Next
 		_task.Status = task.StatusCreated

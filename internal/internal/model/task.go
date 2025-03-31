@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/goexl/gox"
+	"github.com/goexl/id"
 	"github.com/goexl/model"
 	"github.com/goexl/task"
+	"github.com/pangum/pangu"
 )
 
 type Task struct {
@@ -30,6 +32,12 @@ type Task struct {
 	Status task.Status `xorm:"tinyint notnull index(next) default(0) comment(状态，分别是：1、已创建；2、执行中；3、重试中；10、失败；20、成功)" json:"status,omitempty"`
 }
 
+func (t *Task) BeforeInsert() {
+	if 0 == t.Id {
+		pangu.New().Get().Dependency().Get(t.setId).Build().Build().Apply()
+	}
+}
+
 func (*Task) TableComment() string {
 	return "任务"
 }
@@ -40,6 +48,16 @@ func (t *Task) TaskId() (id string) {
 		id = gox.ToString(t.Id)
 	default:
 		id = fmt.Sprintf("%p", t)
+	}
+
+	return
+}
+
+func (t *Task) setId(generator id.Generator) (err error) {
+	if generated, ne := generator.Next(); nil != ne {
+		err = ne
+	} else {
+		t.Id = generated.Get()
 	}
 
 	return

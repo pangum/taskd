@@ -31,11 +31,7 @@ func NewTask(tx get.Transaction) *Task {
 	}
 }
 
-func (t *Task) Add(task *model.Task) (int64, error) {
-	if 0 == task.Id {
-		task.Id = t.id.Next().Value()
-	}
-
+func (t *Task) Add(task *model.Task) (affected int64, err error) {
 	return t.db.InsertOne(task)
 }
 

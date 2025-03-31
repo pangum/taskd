@@ -3,8 +3,10 @@ package model
 import (
 	"time"
 
+	"github.com/goexl/id"
 	"github.com/goexl/model"
 	"github.com/goexl/task"
+	"github.com/pangum/pangu"
 )
 
 type Schedule struct {
@@ -26,6 +28,22 @@ type Schedule struct {
 	Data map[string]any `xorm:"longtext null comment(数据)" json:"data,omitempty"`
 }
 
+func (s *Schedule) BeforeInsert() {
+	if 0 == s.Id {
+		pangu.New().Get().Dependency().Get(s.setId).Build().Build().Apply()
+	}
+}
+
 func (*Schedule) TableComment() string {
 	return "计划"
+}
+
+func (s *Schedule) setId(generator id.Generator) (err error) {
+	if generated, ne := generator.Next(); nil != ne {
+		err = ne
+	} else {
+		s.Id = generated.Get()
+	}
+
+	return
 }
