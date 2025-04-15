@@ -12,7 +12,7 @@ require (
 	github.com/goexl/schedule v0.2.1
 	github.com/goexl/task v0.2.3
 	github.com/pangum/db v0.2.4
-	github.com/pangum/pangu v1.6.0
+	github.com/pangum/pangu v1.6.3
 	github.com/pangum/schedule v0.1.2
 	xorm.io/builder v0.3.13
 )
