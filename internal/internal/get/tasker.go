@@ -3,9 +3,9 @@ package get
 import (
 	"github.com/goexl/log"
 	"github.com/harluo/di"
+	"github.com/harluo/schedule"
 	"github.com/harluo/taskd/internal/internal/core"
 	"github.com/harluo/taskd/internal/internal/repository"
-	"github.com/pangum/schedule"
 )
 
 type Tasker struct {
