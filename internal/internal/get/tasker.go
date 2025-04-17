@@ -2,14 +2,14 @@ package get
 
 import (
 	"github.com/goexl/log"
-	"github.com/pangum/pangu"
+	"github.com/harluo/di"
+	"github.com/harluo/taskd/internal/internal/core"
+	"github.com/harluo/taskd/internal/internal/repository"
 	"github.com/pangum/schedule"
-	"github.com/pangum/taskd/internal/internal/core"
-	"github.com/pangum/taskd/internal/internal/repository"
 )
 
 type Tasker struct {
-	pangu.Get
+	di.Get
 
 	Schedule repository.Schedule
 	Task     repository.Task

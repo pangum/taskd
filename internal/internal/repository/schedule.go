@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"github.com/pangum/taskd/internal/internal/repository/internal/core"
-	"github.com/pangum/taskd/internal/internal/repository/internal/get"
-	"github.com/pangum/taskd/internal/internal/repository/internal/mysql"
+	"github.com/harluo/taskd/internal/internal/repository/internal/core"
+	"github.com/harluo/taskd/internal/internal/repository/internal/get"
+	"github.com/harluo/taskd/internal/internal/repository/internal/mysql"
 )
 
 // Schedule 计划

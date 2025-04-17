@@ -3,14 +3,14 @@ package get
 import (
 	"github.com/goexl/id"
 	"github.com/goexl/log"
-	"github.com/pangum/db"
-	"github.com/pangum/pangu"
+	"github.com/harluo/di"
+	"github.com/harluo/xorm"
 )
 
 type Database struct {
-	pangu.Get
+	di.Get
 
 	Id     id.Generator
 	Logger log.Logger
-	DB     *db.Engine
+	DB     *xorm.Engine
 }

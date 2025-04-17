@@ -5,16 +5,16 @@ import (
 	"time"
 
 	"github.com/goexl/exception"
-	"github.com/pangum/taskd/internal/internal/core"
-	"github.com/pangum/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/core"
+	"github.com/harluo/taskd/internal/internal/model"
 
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
 	"github.com/goexl/schedule"
 	"github.com/goexl/task"
-	"github.com/pangum/taskd/internal/internal/get"
-	"github.com/pangum/taskd/internal/internal/repository"
+	"github.com/harluo/taskd/internal/internal/get"
+	"github.com/harluo/taskd/internal/internal/repository"
 )
 
 type Tasker struct {
@@ -44,12 +44,12 @@ func (t *Tasker) Start(_ context.Context) (err error) {
 	fields := gox.Fields[any]{
 		field.New("name", name),
 	}
-	if id, ae := t.scheduler.Add(t).Duration(3 * time.Second).Name(name).Build().Apply(); nil != ae {
+	if rid, ae := t.scheduler.Add(t).Duration(3 * time.Second).Name(name).Build().Apply(); nil != ae {
 		err = ae
 		t.logger.Error("添加任务出错", fields.Add(field.Error(ae))...)
 	} else {
-		t.id = id
-		t.logger.Info("添加任务成功", fields.Add(field.New("id", id))...)
+		t.id = rid
+		t.logger.Info("添加任务成功", fields.Add(field.New("id", rid))...)
 	}
 
 	return

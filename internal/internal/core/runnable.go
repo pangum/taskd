@@ -6,8 +6,8 @@ import (
 	"github.com/goexl/container"
 	"github.com/goexl/container/queue"
 	"github.com/goexl/task"
-	"github.com/pangum/taskd/internal/internal/kernel"
-	"github.com/pangum/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/kernel"
+	"github.com/harluo/taskd/internal/internal/model"
 )
 
 type Runnable struct {

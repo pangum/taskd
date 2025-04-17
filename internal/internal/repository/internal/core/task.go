@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/pangum/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/model"
 )
 
 type Task interface {

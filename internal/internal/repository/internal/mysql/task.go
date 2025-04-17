@@ -6,17 +6,17 @@ import (
 
 	"github.com/goexl/id"
 	"github.com/goexl/task"
-	"github.com/pangum/db"
-	"github.com/pangum/taskd/internal/internal/internal/column"
-	"github.com/pangum/taskd/internal/internal/model"
-	"github.com/pangum/taskd/internal/internal/repository/internal/get"
+	"github.com/harluo/taskd/internal/internal/internal/column"
+	"github.com/harluo/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/repository/internal/get"
+	"github.com/harluo/xorm"
 	"xorm.io/builder"
 )
 
 type Task struct {
 	id id.Generator
-	db *db.Engine
-	tx *db.Transaction
+	db *xorm.Engine
+	tx *xorm.Transaction
 
 	table *model.Task
 }
@@ -31,11 +31,7 @@ func NewTask(tx get.Transaction) *Task {
 	}
 }
 
-func (t *Task) Add(task *model.Task) (int64, error) {
-	if 0 == task.Id {
-		task.Id = t.id.Next().Value()
-	}
-
+func (t *Task) Add(task *model.Task) (affected int64, err error) {
 	return t.db.InsertOne(task)
 }
 
@@ -106,8 +102,8 @@ func (t *Task) Delete(task *model.Task) (int64, error) {
 	return t.tx.Do(t.delete(task))
 }
 
-func (t *Task) delete(task *model.Task) func(session *db.Session) (int64, error) {
-	return func(session *db.Session) (affected int64, err error) {
+func (t *Task) delete(task *model.Task) func(session *xorm.Session) (int64, error) {
+	return func(session *xorm.Session) (affected int64, err error) {
 		deleted := new(model.Task)
 		deleted.Id = task.Id
 		if adt, dse := session.Delete(deleted); nil != dse { // 删除计划本身
@@ -122,7 +118,7 @@ func (t *Task) delete(task *model.Task) func(session *db.Session) (int64, error)
 	}
 }
 
-func (t *Task) deleteSchedule(session *db.Session, task *model.Task) (affected int64, err error) {
+func (t *Task) deleteSchedule(session *xorm.Session, task *model.Task) (affected int64, err error) {
 	deleted := new(model.Schedule)
 	deleted.Id = task.Schedule
 	affected, err = session.Delete(deleted)

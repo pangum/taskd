@@ -1,14 +1,10 @@
 package model
 
 import (
-	"github.com/pangum/db"
+	"github.com/harluo/xorm"
 )
 
-type synchronizer struct {
-	// 同步器
-}
-
-func (*synchronizer) Sync(synchronizer *db.Synchronizer) error {
+func sync(synchronizer *xorm.Synchronizer) error {
 	return synchronizer.Sync(
 		new(Schedule),
 		new(Task),

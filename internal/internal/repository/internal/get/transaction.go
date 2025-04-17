@@ -1,11 +1,11 @@
 package get
 
 import (
-	"github.com/pangum/db"
+	"github.com/harluo/xorm"
 )
 
 type Transaction struct {
 	Database
 
-	Transaction *db.Transaction
+	Transaction *xorm.Transaction
 }

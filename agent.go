@@ -1,7 +1,7 @@
 package taskd
 
 import (
-	_ "github.com/pangum/taskd/internal/service"
+	_ "github.com/harluo/taskd/internal/service"
 
 	"github.com/goexl/task"
 )

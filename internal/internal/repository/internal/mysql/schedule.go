@@ -5,15 +5,15 @@ import (
 
 	"github.com/goexl/id"
 	"github.com/goexl/task"
-	"github.com/pangum/db"
-	"github.com/pangum/taskd/internal/internal/model"
-	"github.com/pangum/taskd/internal/internal/repository/internal/get"
+	"github.com/harluo/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/repository/internal/get"
+	"github.com/harluo/xorm"
 )
 
 type Schedule struct {
 	id id.Generator
-	db *db.Engine
-	tx *db.Transaction
+	db *xorm.Engine
+	tx *xorm.Transaction
 }
 
 func NewSchedule(database get.Transaction) *Schedule {
@@ -46,8 +46,8 @@ func (s *Schedule) Delete(schedule *model.Schedule) (int64, error) {
 	return s.tx.Do(s.delete(schedule))
 }
 
-func (s *Schedule) delete(schedule *model.Schedule) func(session *db.Session) (int64, error) {
-	return func(session *db.Session) (affected int64, err error) {
+func (s *Schedule) delete(schedule *model.Schedule) func(session *xorm.Session) (int64, error) {
+	return func(session *xorm.Session) (affected int64, err error) {
 		deleted := new(model.Schedule)
 		deleted.Id = schedule.Id
 		if ads, dse := session.Delete(deleted); nil != dse { // 删除计划本身
@@ -62,14 +62,11 @@ func (s *Schedule) delete(schedule *model.Schedule) func(session *db.Session) (i
 	}
 }
 
-func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) func(session *db.Session) (int64, error) {
-	return func(session *db.Session) (affected int64, err error) {
+func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) func(session *xorm.Session) (int64, error) {
+	return func(session *xorm.Session) (affected int64, err error) {
 		schedules := make([]any, 0, len(*runtimes))
 		for _, runtime := range *runtimes {
 			schedule := &runtime.Schedule
-			if 0 == schedule.Id {
-				schedule.Id = s.id.Next().Value()
-			}
 			schedules = append(schedules, schedule)
 		}
 
@@ -86,13 +83,12 @@ func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) f
 }
 
 func (s *Schedule) addTasks(
-	session *db.Session,
+	session *xorm.Session,
 	runtimes *[]*model.Runtime, successes *[]*model.Tasker,
 ) (affected int64, err error) {
 	tasks := make([]any, 0, len(*runtimes))
 	for _, runtime := range *runtimes {
-		_task := new(model.Task)
-		_task.Id = s.id.Next().Value()
+		_task := new(model.Task) // !不用设置标识，通过事件注入
 		_task.Schedule = runtime.Id
 		_task.Next = runtime.Next
 		_task.Status = task.StatusCreated
@@ -111,7 +107,7 @@ func (s *Schedule) addTasks(
 	return
 }
 
-func (s *Schedule) deleteTask(session *db.Session, schedule *model.Schedule) (affected int64, err error) {
+func (s *Schedule) deleteTask(session *xorm.Session, schedule *model.Schedule) (affected int64, err error) {
 	deleted := new(model.Task)
 	deleted.Schedule = schedule.Id
 	affected, err = session.Delete(deleted)
