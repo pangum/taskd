@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/goexl/task"
-	"github.com/harluo/taskd/internal/internal/model"
+	"github.com/harluo/taskd/internal/internal/internal/model"
 )
 
 var _ task.Task = (*Task)(nil)
