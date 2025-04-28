@@ -1,12 +1,12 @@
 package put
 
 import (
+	"github.com/goexl/task"
 	"github.com/harluo/di"
-	"github.com/harluo/taskd/internal/internal/service"
 )
 
 type Tasker struct {
 	di.Put
 
-	Tasker *service.Tasker `name:"harluo.taskd"`
+	Tasker task.Tasker `name:"harluo.taskd"`
 }
