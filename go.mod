@@ -13,7 +13,7 @@ require (
 	github.com/goexl/task v0.2.8
 	github.com/harluo/boot v1.7.1
 	github.com/harluo/di v0.0.3
-	github.com/harluo/schedule v0.1.4
+	github.com/harluo/schedule v0.1.6
 	github.com/harluo/xorm v0.0.4
 	xorm.io/builder v0.3.13
 )
