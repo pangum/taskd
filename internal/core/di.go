@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	di.New().Get().Dependency().Puts(
+	di.New().Instance().Put(
 		func(tasker *service.Tasker) put.Tasker {
 			return put.Tasker{
 				Tasker: tasker,

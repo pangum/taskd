@@ -34,7 +34,7 @@ type Task struct {
 
 func (t *Task) BeforeInsert() {
 	if 0 == t.Id {
-		di.New().Get().Dependency().Get(t.setId).Build().Build().Apply()
+		di.New().Instance().Get(t.setId).Build().Apply()
 	}
 }
 

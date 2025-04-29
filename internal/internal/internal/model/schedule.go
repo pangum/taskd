@@ -30,7 +30,7 @@ type Schedule struct {
 
 func (s *Schedule) BeforeInsert() {
 	if 0 == s.Id {
-		di.New().Get().Dependency().Get(s.setId).Build().Build().Apply()
+		di.New().Instance().Get(s.setId).Build().Apply()
 	}
 }
 
