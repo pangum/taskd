@@ -11,14 +11,14 @@ import (
 	"github.com/goexl/schedule"
 	"github.com/goexl/task"
 	"github.com/harluo/taskd/internal/internal/internal/core"
+	"github.com/harluo/taskd/internal/internal/internal/db"
 	"github.com/harluo/taskd/internal/internal/internal/get"
 	"github.com/harluo/taskd/internal/internal/internal/model"
-	"github.com/harluo/taskd/internal/internal/internal/repository"
 )
 
 type Tasker struct {
-	schedule repository.Schedule
-	task     repository.Task
+	schedule db.Schedule
+	task     db.Task
 
 	scheduler *schedule.Scheduler
 	runnable  *core.Runnable

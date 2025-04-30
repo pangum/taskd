@@ -6,6 +6,6 @@ import (
 
 func init() {
 	di.New().Instance().Put(
-		newInitializer,
-	).Build().Apply()
+		newM1InitSchedule,
+	).Group("migrations").Build().Apply()
 }

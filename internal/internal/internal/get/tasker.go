@@ -5,7 +5,7 @@ import (
 	"github.com/harluo/di"
 	"github.com/harluo/schedule"
 	"github.com/harluo/taskd/internal/internal/internal/core"
-	repository2 "github.com/harluo/taskd/internal/internal/internal/repository"
+	repository2 "github.com/harluo/taskd/internal/internal/internal/db"
 )
 
 type Tasker struct {

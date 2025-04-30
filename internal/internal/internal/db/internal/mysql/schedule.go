@@ -5,50 +5,50 @@ import (
 
 	"github.com/goexl/id"
 	"github.com/goexl/task"
-	model2 "github.com/harluo/taskd/internal/internal/internal/model"
-	"github.com/harluo/taskd/internal/internal/internal/repository/internal/get"
+	"github.com/harluo/taskd/internal/internal/internal/db/internal/get"
+	"github.com/harluo/taskd/internal/internal/internal/model"
 	"github.com/harluo/xorm"
 )
 
 type Schedule struct {
-	id id.Generator
-	db *xorm.Engine
-	tx *xorm.Transaction
+	id          id.Generator
+	engine      *xorm.Engine
+	transaction *xorm.Transaction
 }
 
 func NewSchedule(database get.Transaction) *Schedule {
 	return &Schedule{
-		id: database.Id,
-		db: database.DB,
-		tx: database.Transaction,
+		id:          database.Id,
+		engine:      database.DB,
+		transaction: database.Transaction,
 	}
 }
 
-func (s *Schedule) Add(runtime *model2.Runtime, runtimes ...*model2.Runtime) (successes *[]*model2.Tasker, err error) {
-	models := make([]*model2.Tasker, 0, 1+len(runtimes))
-	saves := append([]*model2.Runtime{runtime}, runtimes...)
-	if _, err = s.tx.Do(s.add(&saves, &models)); nil == err {
+func (s *Schedule) Add(runtime *model.Runtime, runtimes ...*model.Runtime) (successes *[]*model.Tasker, err error) {
+	models := make([]*model.Tasker, 0, 1+len(runtimes))
+	saves := append([]*model.Runtime{runtime}, runtimes...)
+	if _, err = s.transaction.Do(s.add(&saves, &models)); nil == err {
 		successes = &models
 	}
 
 	return
 }
 
-func (s *Schedule) Get(schedule *model2.Schedule, columns ...string) (bool, error) {
-	return s.db.Cols(columns...).Get(schedule)
+func (s *Schedule) Get(schedule *model.Schedule, columns ...string) (bool, error) {
+	return s.engine.Cols(columns...).Get(schedule)
 }
 
-func (s *Schedule) Update(schedule *model2.Schedule, columns ...string) (int64, error) {
-	return s.db.ID(schedule.Id).MustCols(columns...).Update(schedule)
+func (s *Schedule) Update(schedule *model.Schedule, columns ...string) (int64, error) {
+	return s.engine.ID(schedule.Id).MustCols(columns...).Update(schedule)
 }
 
-func (s *Schedule) Delete(schedule *model2.Schedule) (int64, error) {
-	return s.tx.Do(s.delete(schedule))
+func (s *Schedule) Delete(schedule *model.Schedule) (int64, error) {
+	return s.transaction.Do(s.delete(schedule))
 }
 
-func (s *Schedule) delete(schedule *model2.Schedule) func(session *xorm.Session) (int64, error) {
+func (s *Schedule) delete(schedule *model.Schedule) func(session *xorm.Session) (int64, error) {
 	return func(session *xorm.Session) (affected int64, err error) {
-		deleted := new(model2.Schedule)
+		deleted := new(model.Schedule)
 		deleted.Id = schedule.Id
 		if ads, dse := session.Delete(deleted); nil != dse { // 删除计划本身
 			err = dse
@@ -62,7 +62,7 @@ func (s *Schedule) delete(schedule *model2.Schedule) func(session *xorm.Session)
 	}
 }
 
-func (s *Schedule) add(runtimes *[]*model2.Runtime, successes *[]*model2.Tasker) func(session *xorm.Session) (int64, error) {
+func (s *Schedule) add(runtimes *[]*model.Runtime, successes *[]*model.Tasker) func(session *xorm.Session) (int64, error) {
 	return func(session *xorm.Session) (affected int64, err error) {
 		schedules := make([]any, 0, len(*runtimes))
 		for _, runtime := range *runtimes {
@@ -84,11 +84,11 @@ func (s *Schedule) add(runtimes *[]*model2.Runtime, successes *[]*model2.Tasker)
 
 func (s *Schedule) addTasks(
 	session *xorm.Session,
-	runtimes *[]*model2.Runtime, successes *[]*model2.Tasker,
+	runtimes *[]*model.Runtime, successes *[]*model.Tasker,
 ) (affected int64, err error) {
 	tasks := make([]any, 0, len(*runtimes))
 	for _, runtime := range *runtimes {
-		_task := new(model2.Task) // !不用设置标识，通过事件注入
+		_task := new(model.Task) // !不用设置标识，通过事件注入
 		_task.Schedule = runtime.Id
 		_task.Next = runtime.Next
 		_task.Status = task.StatusCreated
@@ -107,18 +107,18 @@ func (s *Schedule) addTasks(
 	return
 }
 
-func (s *Schedule) deleteTask(session *xorm.Session, schedule *model2.Schedule) (affected int64, err error) {
-	deleted := new(model2.Task)
+func (s *Schedule) deleteTask(session *xorm.Session, schedule *model.Schedule) (affected int64, err error) {
+	deleted := new(model.Task)
 	deleted.Schedule = schedule.Id
 	affected, err = session.Delete(deleted)
 
 	return
 }
 
-func (s *Schedule) parseTasks(tasks *[]any, runtimes *[]*model2.Runtime, successes *[]*model2.Tasker) {
+func (s *Schedule) parseTasks(tasks *[]any, runtimes *[]*model.Runtime, successes *[]*model.Tasker) {
 	for index, _task := range *tasks {
-		if converted, ok := _task.(*model2.Task); ok {
-			success := new(model2.Tasker)
+		if converted, ok := _task.(*model.Task); ok {
+			success := new(model.Tasker)
 			success.Id = converted.Id
 			success.Start = converted.Start
 			success.Next = converted.Next
