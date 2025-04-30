@@ -11,7 +11,6 @@ require (
 	github.com/goexl/model v0.1.4
 	github.com/goexl/schedule v0.2.1
 	github.com/goexl/task v0.2.8
-	github.com/harluo/boot v1.7.1
 	github.com/harluo/di v0.0.5
 	github.com/harluo/schedule v0.1.6
 	github.com/harluo/xorm v0.0.4
@@ -37,6 +36,7 @@ require (
 	github.com/goexl/xiren v0.0.8 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/harluo/boot v1.7.2 // indirect
 	github.com/harluo/config v0.0.4 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
