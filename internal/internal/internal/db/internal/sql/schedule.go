@@ -1,4 +1,4 @@
-package mysql
+package sql
 
 import (
 	"time"
@@ -11,23 +11,23 @@ import (
 )
 
 type Schedule struct {
-	id          id.Generator
-	engine      *xorm.Engine
-	transaction *xorm.Transaction
+	id     id.Generator
+	engine *xorm.Engine
+	tx     *xorm.Tx
 }
 
-func NewSchedule(database get.Transaction) *Schedule {
+func NewSchedule(database get.Tx) *Schedule {
 	return &Schedule{
-		id:          database.Id,
-		engine:      database.DB,
-		transaction: database.Transaction,
+		id:     database.Id,
+		engine: database.DB,
+		tx:     database.Tx,
 	}
 }
 
 func (s *Schedule) Add(runtime *model.Runtime, runtimes ...*model.Runtime) (successes *[]*model.Tasker, err error) {
 	models := make([]*model.Tasker, 0, 1+len(runtimes))
 	saves := append([]*model.Runtime{runtime}, runtimes...)
-	if _, err = s.transaction.Do(s.add(&saves, &models)); nil == err {
+	if _, err = s.tx.Do(s.add(&saves, &models)); nil == err {
 		successes = &models
 	}
 
@@ -43,7 +43,7 @@ func (s *Schedule) Update(schedule *model.Schedule, columns ...string) (int64, e
 }
 
 func (s *Schedule) Delete(schedule *model.Schedule) (int64, error) {
-	return s.transaction.Do(s.delete(schedule))
+	return s.tx.Do(s.delete(schedule))
 }
 
 func (s *Schedule) delete(schedule *model.Schedule) func(session *xorm.Session) (int64, error) {

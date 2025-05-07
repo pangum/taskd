@@ -1,4 +1,4 @@
-package mysql
+package sql
 
 import (
 	"fmt"
@@ -14,18 +14,18 @@ import (
 )
 
 type Task struct {
-	id          id.Generator
-	engine      *xorm.Engine
-	transaction *xorm.Transaction
-	table       *model.Task
+	id     id.Generator
+	engine *xorm.Engine
+	tx     *xorm.Tx
+	table  *model.Task
 }
 
-func NewTask(tx get.Transaction) *Task {
+func NewTask(tx get.Tx) *Task {
 	return &Task{
-		id:          tx.Id,
-		engine:      tx.DB,
-		transaction: tx.Transaction,
-		table:       new(model.Task),
+		id:     tx.Id,
+		engine: tx.DB,
+		tx:     tx.Tx,
+		table:  new(model.Task),
 	}
 }
 
@@ -93,11 +93,11 @@ func (t *Task) Update(task *model.Task, columns ...string) (int64, error) {
 }
 
 func (t *Task) Archive(task *model.Task) (int64, error) {
-	return t.transaction.Do(t.delete(task))
+	return t.tx.Do(t.delete(task))
 }
 
 func (t *Task) Delete(task *model.Task) (int64, error) {
-	return t.transaction.Do(t.delete(task))
+	return t.tx.Do(t.delete(task))
 }
 
 func (t *Task) delete(task *model.Task) func(session *xorm.Session) (int64, error) {

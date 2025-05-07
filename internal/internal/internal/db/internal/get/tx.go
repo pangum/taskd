@@ -4,8 +4,8 @@ import (
 	"github.com/harluo/xorm"
 )
 
-type Transaction struct {
+type Tx struct {
 	Database
 
-	Transaction *xorm.Transaction
+	Tx *xorm.Tx
 }
