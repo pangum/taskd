@@ -14,7 +14,7 @@ require (
 	github.com/harluo/di v0.0.5
 	github.com/harluo/migrate v0.1.7
 	github.com/harluo/schedule v0.1.6
-	github.com/harluo/xorm v0.0.4
+	github.com/harluo/xorm v0.0.5
 	xorm.io/builder v0.3.13
 )
 
@@ -30,7 +30,7 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
-	github.com/goexl/db v0.0.4 // indirect
+	github.com/goexl/db v0.0.7 // indirect
 	github.com/goexl/env v0.0.2 // indirect
 	github.com/goexl/gfx v0.2.8 // indirect
 	github.com/goexl/mengpo v0.3.1 // indirect
