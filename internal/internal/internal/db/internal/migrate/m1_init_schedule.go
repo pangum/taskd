@@ -33,3 +33,7 @@ func (*M1InitSchedule) Id() uint64 {
 func (*M1InitSchedule) Description() string {
 	return "创建计划表"
 }
+
+func (*M1InitSchedule) Version() int {
+	return 2
+}

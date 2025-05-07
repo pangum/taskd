@@ -33,3 +33,7 @@ func (*M1InitTask) Id() uint64 {
 func (*M1InitTask) Description() string {
 	return "创建任务调度细节表"
 }
+
+func (*M1InitTask) Version() int {
+	return 2
+}
