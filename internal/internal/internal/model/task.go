@@ -39,7 +39,7 @@ func (t *Task) BeforeInsert() {
 }
 
 func (*Task) TableComment() string {
-	return "任务"
+	return "任务调度细节"
 }
 
 func (t *Task) TaskId() (id string) {
