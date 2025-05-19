@@ -45,10 +45,10 @@ func (t *Tasker) Start(_ context.Context) (err error) {
 	}
 	if rid, ae := t.scheduler.Add(t).Duration(3 * time.Second).Name(name).Build().Apply(); nil != ae {
 		err = ae
-		t.logger.Error("添加任务出错", fields.Add(field.Error(ae))...)
+		t.logger.Error("添加任务出错", field.Error(ae), fields...)
 	} else {
 		t.id = rid
-		t.logger.Info("添加任务成功", fields.Add(field.New("id", rid))...)
+		t.logger.Info("添加任务成功", field.New("id", rid), fields...)
 	}
 
 	return
